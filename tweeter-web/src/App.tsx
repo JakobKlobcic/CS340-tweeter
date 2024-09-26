@@ -15,7 +15,7 @@ import Toaster from "./components/toaster/Toaster";
 import FeedScroller from "./components/mainLayout/FeedScroller";
 import StoryScroller from "./components/mainLayout/StoryScroller";
 import { AuthToken, User, FakeData } from "tweeter-shared";
-import UserItemScroller from "./components/mainLayout/UserItemScroller";
+import UserItemScroller from "./components/mainLayout/StatusItemScroller";
 
 const App = () => {
   const { currentUser, authToken } = useContext(UserInfoContext);

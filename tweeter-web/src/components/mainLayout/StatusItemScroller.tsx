@@ -18,7 +18,7 @@ interface Props {
   itemDescription: string;
 }
 
-const UserItemScroller = (props: Props) => {
+const StatusItemScroller = (props: Props) => {
   const { displayErrorMessage } = useToastListener();
   const [items, setItems] = useState<User[]>([]);
   const [newItems, setNewItems] = useState<User[]>([]);
@@ -49,10 +49,6 @@ const UserItemScroller = (props: Props) => {
       setItems([...items, ...newItems]);
     }
   }, [newItems])
-
-  useEffect(() => {
-    console.log("UserItemScroller mounted");
-  } , []);
 
   const reset = async () => {
     setItems([]);
@@ -104,4 +100,4 @@ const UserItemScroller = (props: Props) => {
   );
 };
 
-export default UserItemScroller;
+export default StatusItemScroller;
