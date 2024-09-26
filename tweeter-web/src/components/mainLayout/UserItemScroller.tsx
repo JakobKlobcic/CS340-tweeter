@@ -50,6 +50,10 @@ const UserItemScroller = (props: Props) => {
     }
   }, [newItems])
 
+  useEffect(() => {
+    console.log("UserItemScroller mounted");
+  } , []);
+
   const reset = async () => {
     setItems([]);
     setNewItems([]);
