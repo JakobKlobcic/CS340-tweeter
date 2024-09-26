@@ -8,6 +8,7 @@ import AuthenticationFormLayout from "../AuthenticationFormLayout";
 import { AuthToken, FakeData, User } from "tweeter-shared";
 import { Buffer } from "buffer";
 import useToastListener from "../../toaster/ToastListenerHook";
+import AuthenticationFields from "../AuthenticationFields";
 
 const Register = () => {
   const [firstName, setFirstName] = useState("");
@@ -19,6 +20,7 @@ const Register = () => {
   const [imageFileExtension, setImageFileExtension] = useState<string>("");
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
 
   const navigate = useNavigate();
   const { updateUserInfo } = useContext(UserInfoContext);
@@ -94,7 +96,14 @@ const Register = () => {
         imageBytes,
         imageFileExtension
       );
-
+      console.log(
+        firstName,
+        lastName,
+        alias,
+        password,
+        imageBytes,
+        imageFileExtension
+      );
       updateUserInfo(user, user, authToken, rememberMe);
       navigate("/");
     } catch (error) {
@@ -155,29 +164,7 @@ const Register = () => {
           />
           <label htmlFor="lastNameInput">Last Name</label>
         </div>
-        <div className="form-floating">
-          <input
-            type="text"
-            className="form-control"
-            size={50}
-            id="aliasInput"
-            placeholder="name@example.com"
-            onKeyDown={registerOnEnter}
-            onChange={(event) => setAlias(event.target.value)}
-          />
-          <label htmlFor="aliasInput">Alias</label>
-        </div>
-        <div className="form-floating">
-          <input
-            type="password"
-            className="form-control"
-            id="passwordInput"
-            placeholder="Password"
-            onKeyDown={registerOnEnter}
-            onChange={(event) => setPassword(event.target.value)}
-          />
-          <label htmlFor="passwordInput">Password</label>
-        </div>
+        <AuthenticationFields onKeyDown={registerOnEnter} setAlias={setAlias} setPassword={setPassword}/>
         <div className="form-floating mb-3">
           <input
             type="file"
