@@ -1,6 +1,6 @@
 import { UserInfoContext } from "../userInfo/UserInfoProvider";
 import { AuthToken, FakeData, User } from "tweeter-shared";
-import { Context, createContext, useState, useContext } from "react";
+import { useContext } from "react";
 import useToastListener from "../toaster/ToastListenerHook";
 
 interface UserNavigationHook{
