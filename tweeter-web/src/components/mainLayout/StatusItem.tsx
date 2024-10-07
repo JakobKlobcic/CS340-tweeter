@@ -3,11 +3,16 @@ import { Link } from "react-router-dom";
 import Post from "../statusItem/Post";
 import useUserNavigationHook from "../userInfo/UserNavigationHook";
 
-const StatusItem = ({ status, index}: { status: Status, index:number}) => {
+interface Props{
+    status: Status;
+    index: number;
+}
+
+const StatusItem = (props: Props) => {
     const {navigateToUser} = useUserNavigationHook();
     return (
         <div
-        key={index}
+        key={props.index}
         className="row mb-3 mx-0 px-0 border rounded bg-white"
       >
         <div className="col bg-light mx-0 px-0">
@@ -15,7 +20,7 @@ const StatusItem = ({ status, index}: { status: Status, index:number}) => {
             <div className="row mx-0 px-0">
               <div className="col-auto p-3">
                 <img
-                  src={status.user.imageUrl}
+                  src={props.status.user.imageUrl}
                   className="img-fluid"
                   width="80"
                   alt="Posting user"
@@ -24,19 +29,19 @@ const StatusItem = ({ status, index}: { status: Status, index:number}) => {
               <div className="col">
                 <h2>
                   <b>
-                    {status.user.firstName} {status.user.lastName}
+                    {props.status.user.firstName} {props.status.user.lastName}
                   </b>{" "}
                   -{" "}
                   <Link
-                    to={status.user.alias}
+                    to={props.status.user.alias}
                     onClick={(event) => navigateToUser(event)}
                   >
-                    {status.user.alias}
+                    {props.status.user.alias}
                   </Link>
                 </h2>
-                {status.formattedDate}
+                {props.status.formattedDate}
                 <br />
-                <Post status={status} />
+                <Post status={props.status} />
               </div>
             </div>
           </div>
