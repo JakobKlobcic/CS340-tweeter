@@ -3,7 +3,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import useToastListener from "../toaster/ToastListenerHook";
 import { useState, useEffect } from "react";
 import StatusItem from "./StatusItem";
-import useUserInfoHook from "../userInfo/userInfoHook";
+import useUserInfoHook from "../userInfo/UserInfoHook";
 
 export const PAGE_SIZE = 10;
 
@@ -17,7 +17,11 @@ const StoryScroller = () => {
 
   const addItems = (newItems: Status[]) => setNewItems(newItems);
 
-  const { displayedUser, setDisplayedUser, currentUser, authToken } = useUserInfoHook();
+  const { displayedUser, authToken } = useUserInfoHook();
+
+  useEffect(() => {
+    console.log("StatusItemScroller mounted");
+  }, []);
 
   // Initialize the component whenever the displayed user changes
   useEffect(() => {
