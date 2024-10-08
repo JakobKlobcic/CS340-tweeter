@@ -2,7 +2,8 @@ import { User, AuthToken } from "tweeter-shared";
 import { UserService } from "../model/service/UserService";
 
 export interface PostView{
-
+    setDisplayedUser: (user: User) => void;
+    displayErrorMessage: (message: string) => void;
 }
 
 export class PostPresenter{
@@ -23,4 +24,21 @@ export class PostPresenter{
     ): Promise<User | null> {
         return this.userService.getUser(authToken, alias);
     }
+    public async navigateToUser (currentUser:User, authToken: AuthToken,target:string): Promise<void> {    
+        try {
+          const alias = this.extractAlias(target);
+    
+          const user = await this.getUser(authToken!, alias);
+    
+          if (!!user) {
+            if (currentUser!.equals(user)) {
+              this._view.setDisplayedUser(currentUser!);
+            } else {
+              this._view.setDisplayedUser(user);
+            }
+          }
+        } catch (error) {
+            this._view.displayErrorMessage(`Failed to get user because of exception: ${error}`);
+        }
+      };
 }

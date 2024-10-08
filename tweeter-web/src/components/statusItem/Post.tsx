@@ -13,28 +13,16 @@ const Post = (props: Props) => {
   const { setDisplayedUser, currentUser, authToken } =useUserInfoHook();
   const { displayErrorMessage } = useToastListener();
 
-  const listener : PostView = {}
+  const listener : PostView = {
+    setDisplayedUser: setDisplayedUser,
+    displayErrorMessage: displayErrorMessage
+  }
 
   const [presenter] = useState(new PostPresenter(listener));
 
   const navigateToUser = async (event: React.MouseEvent): Promise<void> => {
     event.preventDefault();
-
-    try {
-      const alias = presenter.extractAlias(event.target.toString());
-
-      const user = await presenter.getUser(authToken!, alias);
-
-      if (!!user) {
-        if (currentUser!.equals(user)) {
-          setDisplayedUser(currentUser!);
-        } else {
-          setDisplayedUser(user);
-        }
-      }
-    } catch (error) {
-      displayErrorMessage(`Failed to get user because of exception: ${error}`);
-    }
+    await presenter.navigateToUser(currentUser!, authToken!, event.target.toString());
   };
 
   return (
