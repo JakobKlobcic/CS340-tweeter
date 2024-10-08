@@ -14,20 +14,20 @@ export class FeedPresenter extends StatusPresenter{
     
     public async loadMoreItems (authToken: AuthToken, userAlias: string){
         try {
-          const [newItems, hasMore] = await this.statusService.loadMoreFeedItems(
-            authToken,
-            userAlias,
-            PAGE_SIZE,
-            this.lastItem
-          );
+            const [newItems, hasMore] = await this.statusService.loadMoreFeedItems(
+                authToken,
+                userAlias,
+                PAGE_SIZE,
+                this.lastItem
+            );
     
-          this.hasMoreItems = hasMore;
-          this.lastItem = newItems[newItems.length - 1];
-          this.view.addItems(newItems);
+            this.hasMoreItems = hasMore;
+            this.lastItem = newItems[newItems.length - 1];
+            this.view.addItems(newItems);
         } catch (error) {
             this.view.displayErrorMessage(
-            `Failed to load feed items because of exception: ${error}`
-          );
+                `Failed to load feed items because of exception: ${error}`
+            );
         }
       };
 
