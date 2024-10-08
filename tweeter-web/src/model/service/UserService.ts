@@ -36,7 +36,7 @@ export class UserService{
     public async login(
         alias: string,
         password: string
-      ): Promise<[User, AuthToken]>{
+    ): Promise<[User, AuthToken]>{
         // TODO: Replace with the result of calling the server
         const user: User|null = FakeData.instance.firstUser;
     
@@ -45,7 +45,7 @@ export class UserService{
         }
     
         return [user, FakeData.instance.authToken];
-      };
+    };
 
     public async getPageOfUsers(
         lastItem: User | null, 

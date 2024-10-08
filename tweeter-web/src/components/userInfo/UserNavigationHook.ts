@@ -1,8 +1,8 @@
 import { UserInfoContext } from "../userInfo/UserInfoProvider";
-import { AuthToken, FakeData, User } from "tweeter-shared";
 import { useContext } from "react";
 import useToastListener from "../toaster/ToastListenerHook";
-
+import { UserNavigationHookPresenter, UserNavigationHookView } from "../../presenters/UserNavigationHookPresenter";
+import { useState } from "react";
 interface UserNavigationHook{
     navigateToUser: (event: React.MouseEvent) => Promise<void>;
 }
@@ -11,39 +11,17 @@ const useUserNavigationHook = (): UserNavigationHook => {
     useContext(UserInfoContext);
     const { displayErrorMessage } = useToastListener();
 
+    const listener : UserNavigationHookView = {
+      setDisplayedUser: (user) => setDisplayedUser(user),
+      displayErrorMessage: (message) => displayErrorMessage(message)
+    }
+  
+    const [presenter] = useState(new UserNavigationHookPresenter(listener));
+  
     const navigateToUser = async (event: React.MouseEvent): Promise<void> => {
         event.preventDefault();
-    
-        try {
-          const alias = extractAlias(event.target.toString());
-    
-          const user = await getUser(authToken!, alias);
-    
-          if (!!user) {
-            if (currentUser!.equals(user)) {
-              setDisplayedUser(currentUser!);
-            } else {
-              setDisplayedUser(user);
-            }
-          }
-        } catch (error) {
-          displayErrorMessage(`Failed to get user because of exception: ${error}`);
-        }
-    };
-    
-    const extractAlias = (value: string): string => {
-        const index = value.indexOf("@");
-        return value.substring(index);
-    };
-    
-    const getUser = async (
-        authToken: AuthToken,
-        alias: string
-    ): Promise<User | null> => {
-    // TODO: Replace with the result of calling server
-        return FakeData.instance.findUserByAlias(alias);
-    };
-    
+        presenter.navigateToUser(currentUser!, authToken!, event.target.toString());
+    };    
 
     return {
         navigateToUser

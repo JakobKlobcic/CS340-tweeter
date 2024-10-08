@@ -3,7 +3,10 @@ import { UserService } from "../model/service/UserService";
 import { FollowService } from "../model/service/FollowService";
 
 export interface UserInfoView{
-
+    setIsFollower: (isFollower: boolean) => void,
+    setFolloweeCount: (followeeCount: number) => void,
+    setFollowerCount: (followerCount: number) => void,
+    displayErrorMessage: (message: string) => void
 }
 
 export class UserInfoPresenter{
@@ -75,4 +78,50 @@ export class UserInfoPresenter{
     
         return [followerCount, followeeCount];
     };
+
+    public async setIsFollowerStatus(
+        authToken: AuthToken,
+        currentUser: User,
+        displayedUser: User
+      ){
+        try {
+          if (currentUser === displayedUser) {
+            this._view.setIsFollower(false);
+          } else {
+            this._view.setIsFollower(
+              await this.followService.getIsFollowerStatus(authToken!, currentUser!, displayedUser!)
+            );
+          }
+        } catch (error) {
+            this._view.displayErrorMessage(
+            `Failed to determine follower status because of exception: ${error}`
+          );
+        }
+      };
+    
+      public async setNumbFollowees (
+        authToken: AuthToken,
+        displayedUser: User
+      ){
+        try {
+            this._view.setFolloweeCount(await this.followService.getFolloweeCount(authToken, displayedUser));
+        } catch (error) {
+            this._view.displayErrorMessage(
+            `Failed to get followees count because of exception: ${error}`
+          );
+        }
+      };
+      
+      public async setNumbFollowers (
+        authToken: AuthToken,
+        displayedUser: User
+      ){
+        try {
+            this._view.setFollowerCount(await this.followService.getFollowerCount(authToken, displayedUser));
+        } catch (error) {
+            this._view.displayErrorMessage(
+            `Failed to get followers count because of exception: ${error}`
+          );
+        }
+      };
 }
