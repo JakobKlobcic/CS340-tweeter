@@ -1,4 +1,4 @@
-import { AuthToken, User } from "tweeter-shared";
+import { User } from "tweeter-shared";
 import { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import UserItem from "../userItem/UserItem";
@@ -14,13 +14,9 @@ const UserItemScroller = (props: Props) => {
   const { displayErrorMessage } = useToastListener();
   const [items, setItems] = useState<User[]>([]);
   const [newItems, setNewItems] = useState<User[]>([]);
-
   const [changedDisplayedUser, setChangedDisplayedUser] = useState(true);
-  const { displayedUser, authToken } = useUserInfoHook();
 
-  useEffect(() => {
-    console.log("StatusItemScroller mounted");
-  }, []);
+  const { displayedUser, authToken } = useUserInfoHook();
 
   // Initialize the component whenever the displayed user changes
   useEffect(() => {
@@ -44,8 +40,6 @@ const UserItemScroller = (props: Props) => {
   const reset = async () => {
     setItems([]);
     setNewItems([]);
-
- 
     setChangedDisplayedUser(true);
     presenter.reset();
   }
@@ -61,6 +55,7 @@ const UserItemScroller = (props: Props) => {
     presenter.loadMoreItems(authToken!, displayedUser!.alias)
     setChangedDisplayedUser(false)
   }
+
   return (
     <div className="container px-0 overflow-visible vh-100">
       <InfiniteScroll

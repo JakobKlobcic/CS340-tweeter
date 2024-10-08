@@ -1,27 +1,22 @@
-import { AuthToken, FakeData, Status, User } from "tweeter-shared";
+import { Status } from "tweeter-shared";
 import InfiniteScroll from "react-infinite-scroll-component";
 import useToastListener from "../toaster/ToastListenerHook";
 import { useState, useEffect } from "react";
 import StatusItem from "./StatusItem";
 import useUserInfoHook from "../userInfo/UserInfoHook";
+import { StatusPresenter, StatusView } from "../../presenters/StatusPresenter";
 
-export const PAGE_SIZE = 10;
+interface Props {
+  presenterGenerator:(view:StatusView)=>StatusPresenter;
+}
 
-const StoryScroller = () => {
+const StatusItemScroller = (props: Props) => {
   const { displayErrorMessage } = useToastListener();
   const [items, setItems] = useState<Status[]>([]);
   const [newItems, setNewItems] = useState<Status[]>([]);
-  const [hasMoreItems, setHasMoreItems] = useState(true);
-  const [lastItem, setLastItem] = useState<Status | null>(null);
   const [changedDisplayedUser, setChangedDisplayedUser] = useState(true);
 
-  const addItems = (newItems: Status[]) => setNewItems(newItems);
-
   const { displayedUser, authToken } = useUserInfoHook();
-
-  useEffect(() => {
-    console.log("StatusItemScroller mounted");
-  }, []);
 
   // Initialize the component whenever the displayed user changes
   useEffect(() => {
@@ -45,48 +40,27 @@ const StoryScroller = () => {
   const reset = async () => {
     setItems([]);
     setNewItems([]);
-    setLastItem(null);
-    setHasMoreItems(true);
     setChangedDisplayedUser(true);
+    presenter.reset();
+  }
+  const listener : StatusView = {
+    addItems: (newItems: Status[]) =>setNewItems(newItems),
+    displayErrorMessage: displayErrorMessage
   }
 
+  const [presenter] = useState(props.presenterGenerator(listener));
+
   const loadMoreItems = async () => {
-    try {
-      const [newItems, hasMore] = await loadMoreStoryItems(
-        authToken!,
-        displayedUser!.alias,
-        PAGE_SIZE,
-        lastItem
-      );
-
-      setHasMoreItems(hasMore);
-      setLastItem(newItems[newItems.length - 1]);
-      addItems(newItems);
-      setChangedDisplayedUser(false)
-    } catch (error) {
-      displayErrorMessage(
-        `Failed to load story items because of exception: ${error}`
-      );
-    }
-  };
-
-  const loadMoreStoryItems = async (
-    authToken: AuthToken,
-    userAlias: string,
-    pageSize: number,
-    lastItem: Status | null
-  ): Promise<[Status[], boolean]> => {
-    // TODO: Replace with the result of calling server
-    return FakeData.instance.getPageOfStatuses(lastItem, pageSize);
-  };
-
+    presenter.loadMoreItems(authToken!, displayedUser!.alias)
+    setChangedDisplayedUser(false)
+  }
   return (
     <div className="container px-0 overflow-visible vh-100">
       <InfiniteScroll
         className="pr-0 mr-0"
         dataLength={items.length}
         next={loadMoreItems}
-        hasMore={hasMoreItems}
+        hasMore={presenter.hasMoreItems}
         loader={<h4>Loading...</h4>}
       >
         {items.map((item, index) => (
@@ -97,4 +71,4 @@ const StoryScroller = () => {
   );
 };
 
-export default StoryScroller;
+export default StatusItemScroller;
