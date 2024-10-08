@@ -6,7 +6,7 @@ export class UserService{
         return FakeData.instance.firstUser
     }
 
-    public async getAuthToken(): Promise<AuthToken|null>{
+    public async getAuthToken(): Promise<AuthToken>{
         return FakeData.instance.authToken
     }
 

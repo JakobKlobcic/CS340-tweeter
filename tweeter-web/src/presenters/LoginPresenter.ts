@@ -19,13 +19,13 @@ export class LoginPresenter{
         password: string
       ): Promise<[User, AuthToken]>{
         // TODO: Replace with the result of calling the server
-        const user = FakeData.instance.firstUser;
+        const user: User|null = await this.userService.getFirstUser();
     
         if (user === null) {
           throw new Error("Invalid alias or password");
         }
     
-        return [user, FakeData.instance.authToken];
+        return [user, await this.userService.getAuthToken()];
       };
 
 }
