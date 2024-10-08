@@ -2,6 +2,8 @@ import "./Toaster.css";
 import { useEffect } from "react";
 import { Toast } from "react-bootstrap";
 import useToaster from "./ToastHook";
+import { ToastPresenter, ToastView } from "../../presenters/ToastPresenter";
+import { useState } from "react";
 
 interface Props {
   position: string;
@@ -10,31 +12,19 @@ interface Props {
 const Toaster = ({ position }: Props) => {
   const { toastList, deleteToast } = useToaster();
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (toastList.length) {
-        deleteExpiredToasts();
-      }
-    }, 1000);
+  const listener : ToastView = {
+    deleteToast: (id: string) => deleteToast(id)
+  }
+  const [presenter] = useState(new ToastPresenter(listener)); 
 
+  useEffect(() => {
+    const interval = presenter.setInterval(toastList);
     return () => {
       clearInterval(interval);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toastList]);
 
-  const deleteExpiredToasts = () => {
-    const now = Date.now();
-
-    for (let toast of toastList) {
-      if (
-        toast.expirationMillisecond > 0 &&
-        toast.expirationMillisecond < now
-      ) {
-        deleteToast(toast.id);
-      }
-    }
-  };
 
   return (
     <>
