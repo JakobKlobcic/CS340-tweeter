@@ -1,18 +1,51 @@
 import { FakeData } from "tweeter-shared";
 import { User, AuthToken } from "tweeter-shared";
+import { Buffer } from "buffer";
 
 export class UserService{
-    public async getFirstUser(): Promise<User|null>{
-        return FakeData.instance.firstUser
-    }
+    public async getUser (
+        authToken: AuthToken,
+        alias: string
+    ): Promise<User | null> {
+        // TODO: Replace with the result of calling server
+        return FakeData.instance.findUserByAlias(alias);
+    };
 
-    public async getAuthToken(): Promise<AuthToken>{
-        return FakeData.instance.authToken
-    }
+    public async register(
+        firstName: string,
+        lastName: string,
+        alias: string,
+        password: string,
+        userImageBytes: Uint8Array,
+        imageFileExtension: string
+    ): Promise<[User, AuthToken]>{
+        // Not neded now, but will be needed when you make the request to the server in milestone 3
+        const imageStringBase64: string =
+          Buffer.from(userImageBytes).toString("base64");
+    
+        // TODO: Replace with the result of calling the server
+        const user: User|null = FakeData.instance.firstUser;
+      
+        if (user === null) {
+          throw new Error("Invalid registration");
+        }
+    
+        return [user, FakeData.instance.authToken];
+    };
 
-    public async getUserByAlias(userAlias: string): Promise<User|null>{
-        return FakeData.instance.findUserByAlias(userAlias)
-    }
+    public async login(
+        alias: string,
+        password: string
+      ): Promise<[User, AuthToken]>{
+        // TODO: Replace with the result of calling the server
+        const user: User|null = FakeData.instance.firstUser;
+    
+        if (user === null) {
+          throw new Error("Invalid alias or password");
+        }
+    
+        return [user, FakeData.instance.authToken];
+      };
 
     public async getPageOfUsers(
         lastItem: User | null, 

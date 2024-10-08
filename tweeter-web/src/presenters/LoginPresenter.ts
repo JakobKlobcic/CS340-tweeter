@@ -1,5 +1,5 @@
 import { UserService } from "../model/service/UserService";
-import { User, AuthToken, FakeData } from "tweeter-shared";
+import { User, AuthToken } from "tweeter-shared";
 
 export interface LoginView{
 
@@ -17,15 +17,8 @@ export class LoginPresenter{
     public async login(
         alias: string,
         password: string
-      ): Promise<[User, AuthToken]>{
-        // TODO: Replace with the result of calling the server
-        const user: User|null = await this.userService.getFirstUser();
-    
-        if (user === null) {
-          throw new Error("Invalid alias or password");
-        }
-    
-        return [user, await this.userService.getAuthToken()];
-      };
+    ): Promise<[User, AuthToken]>{
+        return this.userService.login(alias, password);
+    };
 
 }
