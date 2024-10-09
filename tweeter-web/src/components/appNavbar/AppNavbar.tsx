@@ -22,7 +22,9 @@ const AppNavbar = () => {
   }
   
     const [presenter] = useState(new NavBarPresenter(listener));
-  
+  const logout = async () => {
+    await presenter.logOut(authToken!);
+  }
   return (
     <Navbar
       collapseOnSelect
@@ -62,7 +64,7 @@ const AppNavbar = () => {
               <NavLink to="/followers">Followers</NavLink>
             </Nav.Item>
             <Nav.Item>
-              <NavLink id="logout" onClick={()=>presenter.logOut(authToken!)} to={location.pathname}>
+              <NavLink id="logout" onClick={logout} to={location.pathname}>
                 Logout
               </NavLink>
             </Nav.Item>
