@@ -2,8 +2,9 @@ import { UserService } from "../model/service/UserService";
 import { User, AuthToken } from "tweeter-shared";
 import { Buffer } from "buffer";
 import { Presenter, View } from "./Presenter";
+import { UserEntryView,UserEntryPresenter } from "./UserEntryPresenter";
 
-export interface RegisterView extends View{
+export interface RegisterView extends UserEntryView{
   setImageBytes: (imageBytes: Uint8Array) => void;
   setImageFileExtension: (imageFileExtension: string) => void;
   setImageUrl: (imageUrl: string) => void;
@@ -15,18 +16,12 @@ export interface RegisterView extends View{
   ) => void;
 }
 
-export class RegisterPresenter extends Presenter<RegisterView>{
-  private userService: UserService;
-
-  public constructor(view: RegisterView){
-      super(view);
-      this.userService = new UserService();
+export class RegisterPresenter extends UserEntryPresenter<UserService, RegisterView>{
+  
+  protected createService(): UserService {
+    return new UserService();
   }
 
-  protected get view(): RegisterView{
-    return super.view as RegisterView;
-  }
-    
   public handleImageFile(file: File|undefined){
     if (file) {
       this.view.setImageUrl(URL.createObjectURL(file));
@@ -61,26 +56,24 @@ export class RegisterPresenter extends Presenter<RegisterView>{
     return file.name.split(".").pop();
   };
 
-  public async doRegister (firstName: string, lastName: string, alias:string, password: string, rememberMe: boolean, imageBytes: Uint8Array, imageFileExtension:string){
-    this.handleRequest("get user", async ()=>{
-        const [user, authToken] = await this.userService.register(
-          firstName,
-          lastName,
-          alias,
-          password,
-          imageBytes,
-          imageFileExtension
-        );
-        console.log(
-          firstName,
-          lastName,
-          alias,
-          password,
-          imageBytes,
-          imageFileExtension
-        );
-        this.view.updateUserInfo(user, user, authToken, rememberMe);
-      }
-    )
-  };
+  public async doRegister(
+    firstName: string,
+    lastName: string,
+    alias: string,
+    password: string,
+    rememberMe: boolean,
+    imageBytes: Uint8Array,
+    imageFileExtension: string
+  ) {
+    const performRegister = () => this.service.register(
+      firstName,
+      lastName,
+      alias,
+      password,
+      imageBytes,
+      imageFileExtension
+    );
+
+    await this.doEntryAction(performRegister, rememberMe);
+  }
 }

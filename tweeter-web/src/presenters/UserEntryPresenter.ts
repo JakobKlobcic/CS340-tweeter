@@ -1,38 +1,37 @@
 import { View, Presenter } from './Presenter';
 import { User, AuthToken } from 'tweeter-shared';
 
-export interface UserEntryView extends View{
-    updateUserInfo: (
-        currentUser: User,
-        displayedUser: User | null,
-        authToken: AuthToken,
-        remember: boolean
-      ) => void;
+export interface UserEntryView extends View {
+  updateUserInfo: (
+    currentUser: User,
+    displayedUser: User | null,
+    authToken: AuthToken,
+    remember: boolean
+  ) => void;
 }
 
-export abstract class UserEntryPresenter<U> extends Presenter<UserEntryView>{
-    private _service: U ;
-    public constructor(view: UserEntryView){
-        super(view);
-        this._service = this.createService();
+export abstract class UserEntryPresenter<U, V extends UserEntryView> extends Presenter<V> {
+  private _service: U;
+  public constructor(view: V) {
+    super(view);
+    this._service = this.createService();
+  }
+  protected abstract createService(): U;
+
+  public get service() {
+    return this._service;
+  }
+  // Generic function to handle entry action
+  protected async doEntryAction(
+    performAction: () => Promise<[User, AuthToken]>,
+    rememberMe: boolean
+  ): Promise<void> {
+    try {
+      const [user, authToken] = await performAction();
+      this.view.updateUserInfo(user, user, authToken, rememberMe);
+    } catch (error) {
+      // handle error as needed
+      console.error('Error during entry action:', error);
     }
-    protected abstract createService(): U;
-
-    //write a generic function tha will remove doRegister and doLogin from their respective files
-    protected abstract doEntryAction(alias: string, password: string, rememberMe: boolean): Promise<void>;
-    
-    protected abstract getMoreItems(authToken: AuthToken, userAlias: string): Promise<[T[], boolean]>;
-
-    protected abstract getItemDescription(): string;
-
-    public get service(){
-        return this._service
-    }
-
-    public async do(alias: string, password: string, rememberMe: boolean){
-        this.handleRequest("log userin ", async ()=>{
-            const [user, authToken] = await this.service.login(alias, password);
-            this.view.updateUserInfo(user, user, authToken, rememberMe);
-        })
-    }
+  }
 }

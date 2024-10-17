@@ -6,7 +6,8 @@ import AuthenticationFormLayout from "../AuthenticationFormLayout";
 import useToastListener from "../../toaster/ToastListenerHook";
 import AuthenticationFields from "../AuthenticationFields";
 import useUserInfoHook from "../../userInfo/UserInfoHook";
-import { LoginPresenter, LoginView } from "../../../presenters/LoginPresenter";
+import { LoginPresenter } from "../../../presenters/LoginPresenter";
+import { UserEntryView } from "../../../presenters/UserEntryPresenter";
 
 interface Props {
   originalUrl?: string;
@@ -22,7 +23,7 @@ const Login = (props: Props) => {
   const { updateUserInfo } = useUserInfoHook();
   const { displayErrorMessage } = useToastListener();
 
-  const listener : LoginView = {
+  const listener : UserEntryView = {
     updateUserInfo: (currentUser, displayedUser, authToken, remember) => updateUserInfo(currentUser, displayedUser, authToken, remember),
     displayErrorMessage: displayErrorMessage
   }
@@ -41,7 +42,7 @@ const Login = (props: Props) => {
 
   const doLogin = async () => {
     setIsLoading(true);
-    presenter.doLogin(alias, password, rememberMe, props.originalUrl!);
+    presenter.doLogin(alias, password, rememberMe);
     if (!!props.originalUrl) {
       navigate(props.originalUrl);
     } else {
