@@ -4,6 +4,7 @@ import { Toast } from "react-bootstrap";
 import useToaster from "./ToastHook";
 import { ToastPresenter, ToastView } from "../../presenters/ToastPresenter";
 import { useState } from "react";
+import useToastListener from "./ToastListenerHook";
 
 interface Props {
   position: string;
@@ -11,8 +12,10 @@ interface Props {
 
 const Toaster = ({ position }: Props) => {
   const { toastList, deleteToast } = useToaster();
+  const { displayErrorMessage } = useToastListener();
 
   const listener : ToastView = {
+    displayErrorMessage: displayErrorMessage,
     deleteToast: (id: string) => deleteToast(id)
   }
   const [presenter] = useState(new ToastPresenter(listener)); 

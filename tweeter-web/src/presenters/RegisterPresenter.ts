@@ -1,8 +1,9 @@
 import { UserService } from "../model/service/UserService";
 import { User, AuthToken } from "tweeter-shared";
 import { Buffer } from "buffer";
+import { Presenter, View } from "./Presenter";
 
-export interface RegisterView{
+export interface RegisterView extends View{
   setImageBytes: (imageBytes: Uint8Array) => void;
   setImageFileExtension: (imageFileExtension: string) => void;
   setImageUrl: (imageUrl: string) => void;
@@ -12,16 +13,18 @@ export interface RegisterView{
     authToken: AuthToken,
     remember: boolean
   ) => void;
-  displayErrorMessage: (message:string) => void
 }
 
-export class RegisterPresenter{
-  private view: RegisterView;
+export class RegisterPresenter extends Presenter<RegisterView>{
   private userService: UserService;
 
   public constructor(view: RegisterView){
-      this.view = view;
+      super(view);
       this.userService = new UserService();
+  }
+
+  protected get view(): RegisterView{
+    return super.view as RegisterView;
   }
     
   public handleImageFile(file: File|undefined){
@@ -59,28 +62,25 @@ export class RegisterPresenter{
   };
 
   public async doRegister (firstName: string, lastName: string, alias:string, password: string, rememberMe: boolean, imageBytes: Uint8Array, imageFileExtension:string){
-    try {
-      const [user, authToken] = await this.userService.register(
-        firstName,
-        lastName,
-        alias,
-        password,
-        imageBytes,
-        imageFileExtension
-      );
-      console.log(
-        firstName,
-        lastName,
-        alias,
-        password,
-        imageBytes,
-        imageFileExtension
-      );
-      this.view.updateUserInfo(user, user, authToken, rememberMe);
-    } catch (error) {
-      this.view.displayErrorMessage(
-        `Failed to register user because of exception: ${error}`
-      );
-    }
+    this.handleRequest("get user", async ()=>{
+        const [user, authToken] = await this.userService.register(
+          firstName,
+          lastName,
+          alias,
+          password,
+          imageBytes,
+          imageFileExtension
+        );
+        console.log(
+          firstName,
+          lastName,
+          alias,
+          password,
+          imageBytes,
+          imageFileExtension
+        );
+        this.view.updateUserInfo(user, user, authToken, rememberMe);
+      }
+    )
   };
 }

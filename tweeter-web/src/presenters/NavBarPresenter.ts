@@ -1,35 +1,35 @@
 import { UserService } from "../model/service/UserService";
 import { User, AuthToken } from "tweeter-shared";
+import { Presenter, View } from "./Presenter";
 
-export interface NavBarView{
+export interface NavBarView extends View{
     displayErrorMessage: (message: string) => void;
     clearLastInfoMessage: () => void;
     clearUserInfo: () => void;
     displayInfoMessage: (message: string, duration: number) => void;
 }
 
-export class NavBarPresenter{
-    private view: NavBarView;
+export class NavBarPresenter extends Presenter<NavBarView>{
     private userService: UserService;
 
     public constructor(view: NavBarView){
-        this.view = view;
+        super(view);
         this.userService = new UserService();
+    }
+
+    protected get view(): NavBarView{
+      return super.view as NavBarView;
     }
 
     public async logOut(authToken: AuthToken){
         this.view.displayInfoMessage("Logging Out...", 0);
-    
-        try {
+        this.handleRequest("log user out", async ()=>{
           await this.logout(authToken!);
     
           this.view.clearLastInfoMessage();
           this.view.clearUserInfo();
-        } catch (error) {
-          this.view.displayErrorMessage(
-            `Failed to log user out because of exception: ${error}`
-          );
         }
+      )
     };
     
     public async logout(authToken: AuthToken): Promise<void>{

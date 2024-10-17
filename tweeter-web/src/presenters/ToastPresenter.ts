@@ -1,18 +1,24 @@
 import { User, AuthToken } from "tweeter-shared";
 import { UserService } from "../model/service/UserService";
 import { Toast } from "../components/toaster/Toast";
+import { Presenter, View } from "./Presenter";
 
-export interface ToastView{
+export interface ToastView extends View{
     deleteToast(id:string): void;
 }
 
-export class ToastPresenter{
-    private _view: ToastView;
+export class ToastPresenter extends Presenter<ToastView>{
     private userService: UserService;
+
     public constructor(view: ToastView){
-        this._view = view;
+        super(view);
         this.userService = new UserService();
     }
+
+    protected get view(): ToastView{
+      return super.view as ToastView;
+    }    
+
     public setInterval(toastList: Toast[]){
         return setInterval(() => {
             if (toastList.length) {
@@ -29,7 +35,7 @@ export class ToastPresenter{
         toast.expirationMillisecond > 0 &&
         toast.expirationMillisecond < now
       ) {
-        this._view.deleteToast(toast.id);
+        this.view.deleteToast(toast.id);
       }
     }
   };

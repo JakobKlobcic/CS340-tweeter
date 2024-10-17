@@ -1,18 +1,23 @@
 import { User, AuthToken } from "tweeter-shared";
 import { UserService } from "../model/service/UserService";
+import { Presenter, View } from "./Presenter";
 
-export interface PostView{
+export interface PostView extends View{
     setDisplayedUser: (user: User) => void;
     displayErrorMessage: (message: string) => void;
 }
 
-export class PostPresenter{
-    private _view: PostView;
+export class PostPresenter extends Presenter<PostView>{
     private userService: UserService;
     public constructor(view: PostView){
-        this._view = view;
+        super(view);
         this.userService = new UserService();
     }
+
+    protected get view(): PostView{
+      return super.view as PostView;
+    }
+
     public extractAlias(value: string): string{
         const index = value.indexOf("@");
         return value.substring(index);
@@ -24,21 +29,20 @@ export class PostPresenter{
     ): Promise<User | null> {
         return this.userService.getUser(authToken, alias);
     }
-    public async navigateToUser (currentUser:User, authToken: AuthToken,target:string): Promise<void> {    
-        try {
-          const alias = this.extractAlias(target);
+    public async navigateToUser (currentUser:User, authToken: AuthToken,target:string): Promise<void> {  
+      this.handleRequest("get user", async ()=>{
+        const alias = this.extractAlias(target);
     
           const user = await this.getUser(authToken!, alias);
-    
+
           if (!!user) {
             if (currentUser!.equals(user)) {
-              this._view.setDisplayedUser(currentUser!);
+              this.view.setDisplayedUser(currentUser!);
             } else {
-              this._view.setDisplayedUser(user);
+              this.view.setDisplayedUser(user);
             }
           }
-        } catch (error) {
-            this._view.displayErrorMessage(`Failed to get user because of exception: ${error}`);
         }
-      };
+      )
+    };
 }
