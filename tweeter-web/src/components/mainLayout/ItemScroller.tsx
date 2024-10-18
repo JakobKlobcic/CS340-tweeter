@@ -1,19 +1,18 @@
-import { User } from "tweeter-shared";
 import { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import UserItem from "../userItem/UserItem";
 import useToastListener from "../toaster/ToastListenerHook";
 import useUserInfoHook from "../userInfo/UserInfoHook";
-import { UserItemPresenter, UserItemView } from "../../presenters/UserItemPresenter";
+import { ItemPresenter, ItemView } from "../../presenters/ItemPresenter";
 
-interface Props {
-  presenterGenerator:(view:UserItemView)=>UserItemPresenter;
+interface Props<V, P, T> {
+  presenterGenerator:(view:V)=>P;
+  itemGenerator: (item:T, index:number) => JSX.Element;
 }
 
-const UserItemScroller = (props: Props) => {
+const ItemScroller = <T, S, V extends ItemView<T>, P extends ItemPresenter<T, S>>(props: Props<V , P, T>) => {
   const { displayErrorMessage } = useToastListener();
-  const [items, setItems] = useState<User[]>([]);
-  const [newItems, setNewItems] = useState<User[]>([]);
+  const [items, setItems] = useState<T[]>([]);
+  const [newItems, setNewItems] = useState<T[]>([]);
   const [changedDisplayedUser, setChangedDisplayedUser] = useState(true);
 
   const { displayedUser, authToken } = useUserInfoHook();
@@ -44,10 +43,10 @@ const UserItemScroller = (props: Props) => {
     presenter.reset();
   }
 
-  const listener : UserItemView = {
-    addItems: (newItems: User[]) =>setNewItems(newItems),
+  const listener = {
+    addItems: (newItems: T[]) =>setNewItems(newItems),
     displayErrorMessage: displayErrorMessage
-  }
+  }  as V;
 
   const [presenter] = useState(props.presenterGenerator(listener));
 
@@ -66,16 +65,11 @@ const UserItemScroller = (props: Props) => {
         loader={<h4>Loading...</h4>}
       >
         {items.map((item, index) => (
-          <div
-            key={index}
-            className="row mb-3 mx-0 px-0 border rounded bg-white"
-          >
-            <UserItem value={item} />
-          </div>
+          props.itemGenerator(item, index)
         ))}
       </InfiniteScroll>
     </div>
   );
 };
 
-export default UserItemScroller;
+export default ItemScroller;
