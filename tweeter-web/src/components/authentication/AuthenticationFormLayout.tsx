@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import OAuth from "./OAuth";
 
 interface Props {
@@ -5,7 +6,7 @@ interface Props {
   submitButtonLabel: string;
   oAuthHeading: string;
   inputFieldGenerator: () => JSX.Element;
-  switchAuthenticationMethodGenerator: () => JSX.Element;
+  switchAuthenticationMethodGenerator: () => string;
   setRememberMe: (value: boolean) => void;
   submitButtonDisabled: () => boolean;
   isLoading: boolean;
@@ -47,7 +48,9 @@ const AuthenticationFormLayout = (props: Props) => {
               </label>
             </div>
 
-            {props.switchAuthenticationMethodGenerator()}
+            <div className="mb-3">
+              Not registered? <Link to={props.switchAuthenticationMethodGenerator()}>Register</Link>
+            </div>
 
             <button
               id="submitButton"

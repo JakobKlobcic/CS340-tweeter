@@ -44,12 +44,6 @@ const Register = () => {
     );
   };
 
-  const registerOnEnter = (event: React.KeyboardEvent<HTMLElement>) => {
-    if (event.key == "Enter" && !checkSubmitButtonStatus()) {
-      doRegister();
-    }
-  };
-
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     presenter.handleImageFile(file);
@@ -58,7 +52,7 @@ const Register = () => {
 
   const doRegister = async () => {
       setIsLoading(true);
-      await presenter.doRegister(firstName, lastName, password, alias, rememberMe, imageBytes, imageFileExtension);
+      await presenter.register(firstName, lastName, password, alias, rememberMe, imageBytes, imageFileExtension);
       navigate("/");
       setIsLoading(false);
 
@@ -74,7 +68,9 @@ const Register = () => {
             size={50}
             id="firstNameInput"
             placeholder="First Name"
-            onKeyDown={registerOnEnter}
+            onKeyDown={
+              (event: React.KeyboardEvent<HTMLElement>)=>presenter.actionOnEnter(event, checkSubmitButtonStatus, doRegister)
+            }
             onChange={(event) => setFirstName(event.target.value)}
           />
           <label htmlFor="firstNameInput">First Name</label>
@@ -86,18 +82,27 @@ const Register = () => {
             size={50}
             id="lastNameInput"
             placeholder="Last Name"
-            onKeyDown={registerOnEnter}
+            onKeyDown={
+              (event: React.KeyboardEvent<HTMLElement>)=>presenter.actionOnEnter(event, checkSubmitButtonStatus, doRegister)
+            }
             onChange={(event) => setLastName(event.target.value)}
           />
           <label htmlFor="lastNameInput">Last Name</label>
         </div>
-        <AuthenticationFields onKeyDown={registerOnEnter} setAlias={setAlias} setPassword={setPassword}/>
+        <AuthenticationFields 
+          onKeyDown={
+            (event: React.KeyboardEvent<HTMLElement>)=>presenter.actionOnEnter(event, checkSubmitButtonStatus, doRegister)
+          }
+          setAlias={setAlias} 
+          setPassword={setPassword}/>
         <div className="form-floating mb-3">
           <input
             type="file"
             className="d-inline-block py-5 px-4 form-control bottom"
             id="imageFileInput"
-            onKeyDown={registerOnEnter}
+            onKeyDown={
+              (event: React.KeyboardEvent<HTMLElement>)=>presenter.actionOnEnter(event, checkSubmitButtonStatus, doRegister)
+            }
             onChange={handleFileChange}
           />
           <label htmlFor="imageFileInput">User Image</label>
@@ -107,21 +112,13 @@ const Register = () => {
     );
   };
 
-  const switchAuthenticationMethodGenerator = () => {
-    return (
-      <div className="mb-3">
-        Algready registered? <Link to="/login">Sign in</Link>
-      </div>
-    );
-  };
-
   return (
     <AuthenticationFormLayout
       headingText="Please Register"
       submitButtonLabel="Register"
       oAuthHeading="Register with:"
       inputFieldGenerator={inputFieldGenerator}
-      switchAuthenticationMethodGenerator={switchAuthenticationMethodGenerator}
+      switchAuthenticationMethodGenerator={presenter.switchAuthenticationMethodGenerator}
       setRememberMe={setRememberMe}
       submitButtonDisabled={checkSubmitButtonStatus}
       isLoading={isLoading}

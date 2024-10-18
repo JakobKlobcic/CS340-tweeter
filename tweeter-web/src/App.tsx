@@ -10,20 +10,17 @@ import Login from "./components/authentication/login/Login";
 import Register from "./components/authentication/register/Register";
 import MainLayout from "./components/mainLayout/MainLayout";
 import Toaster from "./components/toaster/Toaster";
-import UserItemScroller from "./components/mainLayout/UserItemScroller";
 import useUserInfoHook from "./components/userInfo/UserInfoHook";
 import { UserItemPresenter, UserItemView } from "./presenters/UserItemPresenter";
 import { FolloweePresenter } from "./presenters/FolloweePresenter";
 import { FollowerPresenter } from "./presenters/FollowerPresenter"
 import { StatusPresenter, StatusView } from "./presenters/StatusPresenter";
 import { FeedPresenter } from "./presenters/FeedPresenter";
-import StatusItemScroller from "./components/mainLayout/StatusItemScroller";
 import { StoryPresenter } from "./presenters/StoryPresenter";
 import { Status, User } from "tweeter-shared";
 import { StatusService } from "./model/service/StatusService";
 import ItemScroller from "./components/mainLayout/ItemScroller";
 import StatusItem from "./components/mainLayout/StatusItem";
-import { UserService } from "./model/service/UserService";
 import { FollowService } from "./model/service/FollowService";
 import UserItem from "./components/userItem/UserItem";
 const App = () => {

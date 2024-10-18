@@ -18,9 +18,11 @@ export abstract class UserEntryPresenter<U, V extends UserEntryView> extends Pre
   }
   protected abstract createService(): U;
 
-  protected abstract actionOnEnter(event: React.KeyboardEvent<HTMLElement>, checkSubmitButtonStatus:Function): Promise<void>;
-
-  public get service() {
+  public async actionOnEnter(event: React.KeyboardEvent<HTMLElement>, checkSubmitButtonStatus: Function, doAction: Function): Promise<void> {
+    if (event.key == "Enter" && !checkSubmitButtonStatus()) {
+      doAction();
+    }
+  }  public get service() {
     return this._service;
   }
   // Generic function to handle entry action

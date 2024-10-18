@@ -6,7 +6,7 @@ import AuthenticationFormLayout from "../AuthenticationFormLayout";
 import useToastListener from "../../toaster/ToastListenerHook";
 import AuthenticationFields from "../AuthenticationFields";
 import useUserInfoHook from "../../userInfo/UserInfoHook";
-import { LoginPresenter } from "../../../presenters/LoginPresenter";
+import { LoginPresenter, LoginView } from "../../../presenters/LoginPresenter";
 import { UserEntryView } from "../../../presenters/UserEntryPresenter";
 
 interface Props {
@@ -23,21 +23,15 @@ const Login = (props: Props) => {
   const { updateUserInfo } = useUserInfoHook();
   const { displayErrorMessage } = useToastListener();
 
-  const listener : UserEntryView = {
+  const listener : LoginView = {
     updateUserInfo: (currentUser, displayedUser, authToken, remember) => updateUserInfo(currentUser, displayedUser, authToken, remember),
-    displayErrorMessage: displayErrorMessage
+    displayErrorMessage: displayErrorMessage,
   }
 
   const [presenter] = useState(new LoginPresenter(listener));
 
   const checkSubmitButtonStatus = (): boolean => {
     return !alias || !password;
-  };
-
-  const loginOnEnter = (event: React.KeyboardEvent<HTMLElement>) => {
-    if (event.key == "Enter" && !checkSubmitButtonStatus()) {
-      doLogin();
-    }
   };
 
   const doLogin = async () => {
@@ -54,16 +48,13 @@ const Login = (props: Props) => {
   const inputFieldGenerator = () => {
     return (
       <>
-        <AuthenticationFields onKeyDown={loginOnEnter} setAlias={setAlias} setPassword={setPassword}/>
+        <AuthenticationFields 
+        onKeyDown={
+          (event: React.KeyboardEvent<HTMLElement>)=>presenter.actionOnEnter(event, checkSubmitButtonStatus, doLogin)
+        } 
+        setAlias={setAlias} 
+        setPassword={setPassword}/>
       </>
-    );
-  };
-
-  const switchAuthenticationMethodGenerator = () => {
-    return (
-      <div className="mb-3">
-        Not registered? <Link to="/register">Register</Link>
-      </div>
     );
   };
 
@@ -73,7 +64,7 @@ const Login = (props: Props) => {
       submitButtonLabel="Sign in"
       oAuthHeading="Sign in with:"
       inputFieldGenerator={inputFieldGenerator}
-      switchAuthenticationMethodGenerator={switchAuthenticationMethodGenerator}
+      switchAuthenticationMethodGenerator={presenter.switchAuthenticationMethodGenerator}
       setRememberMe={setRememberMe}
       submitButtonDisabled={checkSubmitButtonStatus}
       isLoading={isLoading}

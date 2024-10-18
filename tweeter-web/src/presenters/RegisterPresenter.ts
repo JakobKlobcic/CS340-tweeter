@@ -56,7 +56,7 @@ export class RegisterPresenter extends UserEntryPresenter<UserService, RegisterV
     return file.name.split(".").pop();
   };
 
-  public async doRegister(
+  public async register(
     firstName: string,
     lastName: string,
     alias: string,
@@ -76,4 +76,8 @@ export class RegisterPresenter extends UserEntryPresenter<UserService, RegisterV
 
     await this.doEntryAction(performRegister, rememberMe);
   }
+  
+  public switchAuthenticationMethodGenerator(): string {
+    return "/register"
+  };
 }
