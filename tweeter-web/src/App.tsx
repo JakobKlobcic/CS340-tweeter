@@ -20,7 +20,7 @@ import { StoryPresenter } from "./presenters/StoryPresenter";
 import { Status, User } from "tweeter-shared";
 import { StatusService } from "./model/service/StatusService";
 import ItemScroller from "./components/mainLayout/ItemScroller";
-import StatusItem from "./components/mainLayout/StatusItem";
+import StatusItem from "./components/statusItem/StatusItem";
 import { FollowService } from "./model/service/FollowService";
 import UserItem from "./components/userItem/UserItem";
 const App = () => {

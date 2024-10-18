@@ -33,6 +33,7 @@ const Register = () => {
   }
 
   const [presenter] = useState(new RegisterPresenter(listener));
+  
   const checkSubmitButtonStatus = (): boolean => {
     return (
       !firstName ||
