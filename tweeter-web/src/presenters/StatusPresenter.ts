@@ -1,6 +1,4 @@
 import { Status} from "tweeter-shared"
-import { View } from "./Presenter";
-import { PagedItemPresenter } from "./PagedItemPresenter";
 import { StatusService } from "../model/service/StatusService";
 import { ItemView, ItemPresenter } from "./ItemPresenter";
 
