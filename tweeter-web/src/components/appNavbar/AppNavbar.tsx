@@ -21,7 +21,7 @@ const AppNavbar = () => {
     displayInfoMessage: (message: string, duration: number) => displayInfoMessage(message, duration)
   }
   
-    const [presenter] = useState(new NavBarPresenter(listener));
+  const [presenter] = useState(new NavBarPresenter(listener));
   const logout = async () => {
     await presenter.logOut(authToken!);
   }

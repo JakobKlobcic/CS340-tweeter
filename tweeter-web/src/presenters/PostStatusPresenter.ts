@@ -10,46 +10,39 @@ export interface PostStatusView extends View{
 }
 
 export class PostStatusPresenter extends Presenter<PostStatusView>{
-    private userService: UserService;
+    private _userService: UserService | null = null;
 
     public constructor(view: PostStatusView){
         super(view);
-        this.userService = new UserService();
     }
 
     protected get view(): PostStatusView{
       return super.view as PostStatusView;
     }
 
+    public get service(): UserService{
+        if(this._userService === null){
+            return new UserService();
+        }
+        return this._userService;
+    }
+
     
-    public async submitPost (post: string, currentUser: User, authToken: AuthToken){
+    public async submitPost (status: Status, currentUser: User, authToken: AuthToken){
       try {
         this.view.displayInfoMessage("Posting status...", 0);
 
-        const status = new Status(post, currentUser!, Date.now());
-
-        await this.postStatus(authToken!, status);
+        await this.service.postStatus(authToken!, status);
 
         this.view.setPost("");
         this.view.displayInfoMessage("Status posted!", 2000);
       } catch (error) {
           this.view.displayErrorMessage(
-          `Failed to post the status because of exception: ${error}`
+          `Failed to post the status because of exception: ${(error as Error).message}`
         );
       } finally {
           this.view.clearLastInfoMessage();
       }
-    };
-
-    public async postStatus(
-        authToken: AuthToken,
-        newStatus: Status
-    ): Promise<void>{
-        // Pause so we can see the logging out message. Remove when connected to the server
-        await new Promise((f) => setTimeout(f, 2000));
-    
-        // TODO: Call the server to post the status
-    };
-    
+    };   
 
 }

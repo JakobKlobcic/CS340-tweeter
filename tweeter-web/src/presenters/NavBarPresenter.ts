@@ -1,5 +1,5 @@
 import { UserService } from "../model/service/UserService";
-import { User, AuthToken } from "tweeter-shared";
+import { AuthToken } from "tweeter-shared";
 import { Presenter, View } from "./Presenter";
 
 export interface NavBarView extends View{
@@ -10,31 +10,32 @@ export interface NavBarView extends View{
 }
 
 export class NavBarPresenter extends Presenter<NavBarView>{
-    private userService: UserService;
+    private _userService: UserService | null = null;
 
     public constructor(view: NavBarView){
         super(view);
-        this.userService = new UserService();
     }
 
     protected get view(): NavBarView{
       return super.view as NavBarView;
     }
 
+    public get userService(): UserService{
+      if (this._userService === null){
+        this._userService = new UserService();
+      } 
+      return this._userService;
+    }
+
     public async logOut(authToken: AuthToken){
         this.view.displayInfoMessage("Logging Out...", 0);
         this.handleRequest("log user out", async ()=>{
-          await this.logout(authToken!);
+          await this.userService.logout(authToken!);
     
           this.view.clearLastInfoMessage();
           this.view.clearUserInfo();
         }
       )
-    };
-    
-    public async logout(authToken: AuthToken): Promise<void>{
-        // Pause so we can see the logging out message. Delete when the call to the server is implemented.
-        await new Promise((res) => setTimeout(res, 1000));
     };
 
 }

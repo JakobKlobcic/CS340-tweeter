@@ -7,6 +7,7 @@ const AuthenticationFields = ( {onKeyDown, setAlias, setPassword}: {onKeyDown:an
         <div className="form-floating">
           <input
             type="text"
+            aria-label="alias"
             className="form-control"
             size={50}
             id="aliasInput"
@@ -19,6 +20,7 @@ const AuthenticationFields = ( {onKeyDown, setAlias, setPassword}: {onKeyDown:an
         <div className="form-floating mb-3">
           <input
             type="password"
+            aria-label="password"
             className="form-control bottom"
             id="passwordInput"
             placeholder="Password"

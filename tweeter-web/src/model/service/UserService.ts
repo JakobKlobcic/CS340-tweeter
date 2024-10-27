@@ -1,5 +1,5 @@
 import { FakeData } from "tweeter-shared";
-import { User, AuthToken } from "tweeter-shared";
+import { User, AuthToken, Status } from "tweeter-shared";
 import { Buffer } from "buffer";
 
 export class UserService{
@@ -54,4 +54,19 @@ export class UserService{
     Promise<[User[], boolean]>{
         return FakeData.instance.getPageOfUsers(lastItem, pageSize, userAlias);
     }
+
+    public async logout(authToken: AuthToken): Promise<void>{
+        // Pause so we can see the logging out message. Delete when the call to the server is implemented.
+        await new Promise((res) => setTimeout(res, 1000));
+    };
+
+    public async postStatus(
+        authToken: AuthToken,
+        newStatus: Status
+    ): Promise<void>{
+        // Pause so we can see the logging out message. Remove when connected to the server
+        await new Promise((f) => setTimeout(f, 2000));
+    
+        // TODO: Call the server to post the status
+    };
 }
