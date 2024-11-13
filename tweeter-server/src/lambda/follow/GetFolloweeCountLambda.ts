@@ -1,11 +1,11 @@
-import { IsFollowerStatusRequest, IsFollowerStatusResponse, PagedUserItemRequest, PagedUserItemResponse } from "tweeter-shared";
+import { FollowCountRequest, FollowCountResponse} from "tweeter-shared";
 import { FollowService } from "../../model/service/FollowService";
-export const handler = async (request: IsFollowerStatusRequest): Promise<IsFollowerStatusResponse> => {
+export const handler = async (request: FollowCountRequest): Promise<FollowCountResponse> => {
     const followService = new FollowService();
-    const isFollower = await followService.getIsFollowerStatus(request.authToken, request.user, request.selectedUser);
+    const count = await followService.getFolloweeCount(request.authToken, request.user);
     return {
         success: true,
         message: null,
-        isFollower: isFollower
+        count: count
     }
 }
