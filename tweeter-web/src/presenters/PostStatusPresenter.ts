@@ -1,6 +1,6 @@
-import { UserService } from "../model/service/UserService";
 import { User, AuthToken, Status } from "tweeter-shared";
 import { Presenter, View } from "./Presenter";
+import { StatusService } from "../model/service/StatusService";
 
 export interface PostStatusView extends View{
     displayInfoMessage: (message: string, duration: number) => void;
@@ -10,7 +10,7 @@ export interface PostStatusView extends View{
 }
 
 export class PostStatusPresenter extends Presenter<PostStatusView>{
-    private _userService: UserService | null = null;
+    private _statusService: StatusService | null = null;
 
     public constructor(view: PostStatusView){
         super(view);
@@ -20,11 +20,11 @@ export class PostStatusPresenter extends Presenter<PostStatusView>{
       return super.view as PostStatusView;
     }
 
-    public get service(): UserService{
-        if(this._userService === null){
-            return new UserService();
+    public get service(): StatusService{
+        if(this._statusService === null){
+            return new StatusService();
         }
-        return this._userService;
+        return this._statusService;
     }
 
     

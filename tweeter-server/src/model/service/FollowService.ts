@@ -46,6 +46,22 @@ export class FollowService{
         return FakeData.instance.getFollowerCount(user.alias);
     };
 
+    public async followUser(
+        authToken: string,
+        userToUnfollow: UserDTO
+    ){
+        // Pause so we can see the follow message. Remove when connected to the server
+        await new Promise((f) => setTimeout(f, 2000));
+    }
+
+    public async unfollowUser(
+        authToken: string,
+        userToUnfollow: UserDTO
+    ){
+        // Pause so we can see the follow message. Remove when connected to the server
+        await new Promise((f) => setTimeout(f, 2000));
+    }
+
     private async getFakeUserData(lastItem: UserDTO | null, pageSize: number, userAlias: string): Promise<[UserDTO[], boolean]> {
         const [items, hasMore] = FakeData.instance.getPageOfUsers(User.fromDto(lastItem), pageSize, userAlias);
         const dtos = items.map((user) => user.dto);
