@@ -1,14 +1,17 @@
-import { FakeData } from "tweeter-shared";
-import { User, AuthToken, Status } from "tweeter-shared";
+import { FakeData, GetUserRequest, Status } from "tweeter-shared";
+import { User, AuthToken } from "tweeter-shared";
 import { Buffer } from "buffer";
+import { ServerFacade } from "../../network/ServerFacade";
 
 export class UserService{
+    private serverFacade: ServerFacade = new ServerFacade();
+    
     public async getUser (
         authToken: AuthToken,
         alias: string
     ): Promise<User | null> {
         // TODO: Replace with the result of calling server
-        return FakeData.instance.findUserByAlias(alias);
+        return await this.serverFacade.getUser({authToken:authToken.token, alias});
     };
 
     public async register(
@@ -23,14 +26,14 @@ export class UserService{
         const imageStringBase64: string =
           Buffer.from(userImageBytes).toString("base64");
     
-        // TODO: Replace with the result of calling the server
-        const user: User|null = FakeData.instance.firstUser;
-      
-        if (user === null) {
-          throw new Error("Invalid registration");
-        }
-    
-        return [user, FakeData.instance.authToken];
+        return await this.serverFacade.register({
+            firstName, 
+            lastName, 
+            alias, 
+            password, 
+            userImageBytes, //TODO becomes string
+            imageFileExtension
+        });
     };
 
     public async login(
@@ -44,12 +47,12 @@ export class UserService{
           throw new Error("Invalid alias or password");
         }
     
-        return [user, FakeData.instance.authToken];
+        return await this.serverFacade.login({alias, password});
     };
 
     public async logout(authToken: AuthToken): Promise<void>{
         // Pause so we can see the logging out message. Delete when the call to the server is implemented.
-        await new Promise((res) => setTimeout(res, 1000));
+        return await this.serverFacade.logout({authToken:authToken.token});
     };
 
     public async postStatus(

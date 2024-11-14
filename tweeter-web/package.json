@@ -11,6 +11,7 @@
     "@types/react-dom": "^18.2.19",
     "bootstrap": "^5.3.3",
     "buffer": "^6.0.3",
+    "isomorphic-fetch": "^3.0.0",
     "node": "^20.11.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.1",
@@ -28,7 +29,6 @@
     "serve": "vite preview",
     "reload": "npm run build && npm run serve",
     "test": "jest"
-
   },
   "eslintConfig": {
     "extends": [
@@ -69,18 +69,18 @@
     "vite-tsconfig-paths": "^4.3.1"
   },
   "jest": {
-  "verbose": true,
-  "testEnvironment": "jsdom",
-  "moduleNameMapper": {
-    "\\.(css|less)$": "<rootDir>/test/__mocks__/styleMock.js"
-  },
-  "testMatch": [
-    "<rootDir>/test/**/*.test.tsx",
-    "<rootDir>/test/**/*.test.ts"
-  ],
-  "transform": {
-    "^.+\\.tsx?$": "ts-jest",
-    "\\.js$": "babel-jest"
+    "verbose": true,
+    "testEnvironment": "jsdom",
+    "moduleNameMapper": {
+      "\\.(css|less)$": "<rootDir>/test/__mocks__/styleMock.js"
+    },
+    "testMatch": [
+      "<rootDir>/test/**/*.test.tsx",
+      "<rootDir>/test/**/*.test.ts"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest",
+      "\\.js$": "babel-jest"
+    }
   }
-}
 }

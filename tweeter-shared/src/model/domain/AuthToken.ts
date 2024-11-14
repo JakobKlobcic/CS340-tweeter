@@ -60,6 +60,10 @@ export class AuthToken {
     }
   }
 
+  public static fromDto(dto: AuthTokenDTO): AuthToken {
+    return new AuthToken(dto.token, dto.timestamp);
+  }
+
   public toJson(): string {
     return JSON.stringify(this);
   }

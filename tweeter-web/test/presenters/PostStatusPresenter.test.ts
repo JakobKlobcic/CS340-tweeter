@@ -7,11 +7,12 @@ import {AuthToken, User, Status} from "tweeter-shared";
 import {PostStatusPresenter, PostStatusView} from "../../src/presenters/PostStatusPresenter";
 import { instance, mock, verify, spy, when, anything, capture } from "ts-mockito";
 import {UserService} from "../../src/model/service/UserService";
+import { StatusService } from "../../src/model/service/StatusService";
 
 describe("PostStatusPresenter", () => {
     let mockView: PostStatusView;
     let presenter: PostStatusPresenter;
-    let mockUserService: UserService;
+    let mockUserService: StatusService;
 
     const authToken: AuthToken = new AuthToken("token", Date.now());
     const post: string = "post";
@@ -26,7 +27,7 @@ describe("PostStatusPresenter", () => {
         const presenterSpy = spy(new PostStatusPresenter(mockViewInstance));
         presenter = instance(presenterSpy);
 
-        mockUserService = mock<UserService>();
+        mockUserService = mock<StatusService>();
         const mockUserServiceInstance = instance(mockUserService);
 
         when(presenterSpy.service).thenReturn(mockUserServiceInstance);

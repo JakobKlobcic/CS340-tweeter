@@ -16,7 +16,7 @@ export type { PostSegmentDTO } from "./model/dto/PostSegmentDto";
 export type { AuthTokenDTO } from "./model/dto/AuthTokenDto";
 
 //Requests
-export type { TweeterRequest as TwitterRequest } from "./model/net/request/TweeterRequest";
+export type { TweeterRequest } from "./model/net/request/TweeterRequest";
 export type { PagedUserItemRequest } from "./model/net/request/PagedUserItemRequest";
 export type { IsFollowerStatusRequest } from "./model/net/request/IsFollowerStatusRequest";
 export type { FollowCountRequest } from "./model/net/request/FollowCountRequest";

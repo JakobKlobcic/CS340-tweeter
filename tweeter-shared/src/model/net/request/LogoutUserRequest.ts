@@ -1,3 +1,5 @@
-export interface LogoutUserRequest {
+import { TweeterRequest } from "./TweeterRequest";
+
+export interface LogoutUserRequest extends TweeterRequest {
     authToken: string 
 }
