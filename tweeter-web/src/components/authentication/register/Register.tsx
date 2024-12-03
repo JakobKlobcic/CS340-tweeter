@@ -53,7 +53,7 @@ const Register = () => {
 
   const doRegister = async () => {
       setIsLoading(true);
-      await presenter.register(firstName, lastName, password, alias, rememberMe, imageBytes, imageFileExtension);
+      await presenter.register(firstName, lastName, alias, password, rememberMe, imageBytes, imageFileExtension);
       navigate("/");
       setIsLoading(false);
 
