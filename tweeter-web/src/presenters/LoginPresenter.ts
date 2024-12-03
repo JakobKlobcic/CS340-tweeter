@@ -15,7 +15,7 @@ export class LoginPresenter extends UserEntryPresenter<UserService, LoginView> {
   }
 
   public switchAuthenticationMethodGenerator(): string {
-    return "/login"
+    return "/register";
   };
 
 }

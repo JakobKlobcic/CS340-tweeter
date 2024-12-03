@@ -78,6 +78,6 @@ export class RegisterPresenter extends UserEntryPresenter<UserService, RegisterV
   }
   
   public switchAuthenticationMethodGenerator(): string {
-    return "/register"
+    return "/login"
   };
 }
