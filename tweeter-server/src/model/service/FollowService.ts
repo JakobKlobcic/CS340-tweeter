@@ -1,5 +1,7 @@
-import { User, FakeData, UserDTO } from "tweeter-shared";
-
+import {  UserDTO } from "tweeter-shared";
+import { FollowsDAO } from "../dao/FollowsDAO";
+import { SessionDAO } from "../dao/SessionDAO";
+import { UserDAO } from "../dao/UserDAO";
 export class FollowService{
     public async loadMoreFollowers(
         authToken: string,
@@ -7,8 +9,23 @@ export class FollowService{
         pageSize: number,
         lastItem: UserDTO | null
     ): Promise<[UserDTO[], boolean]> {
-        // TODO: Replace with the result of calling server
-        return this.getFakeUserData(lastItem, pageSize, userAlias);
+        if( ! SessionDAO.instance.tokenIsValid(authToken) ){
+            throw new Error("Invalid token");
+        }
+        const followerAliases = await FollowsDAO.instance.getFollowers(userAlias, pageSize, lastItem);
+
+        const usersDB = await UserDAO.instance.getMultiple(followerAliases);
+        
+        const users = usersDB.map(user => {
+            return {
+                firstName: user.firstName,
+                lastName: user.lastName,
+                alias: user.alias,
+                imageUrl: user.imageUrl
+            }
+        })
+
+        return [users , users.length === pageSize];
     };
 
     public async loadMoreFollowees (
@@ -17,8 +34,24 @@ export class FollowService{
         pageSize: number,
         lastItem: UserDTO | null
     ): Promise<[UserDTO[], boolean]> {
-        // TODO: Replace with the result of calling server
-        return this.getFakeUserData(lastItem, pageSize, userAlias);
+        if( ! SessionDAO.instance.tokenIsValid(authToken) ){
+            throw new Error("Invalid token");
+        }
+        const follows = await FollowsDAO.instance.getFollowees(userAlias, pageSize, lastItem);
+        //const userAliases = follows.map(follow);
+        console.log("FOLLOWEES ALIASES", follows)
+        const usersDB = await UserDAO.instance.getMultiple(follows);
+
+        const users = usersDB.map(user => {
+            return {
+                firstName: user.firstName,
+                lastName: user.lastName,
+                alias: user.alias,
+                imageUrl: user.imageUrl
+            }
+        })
+
+        return [users , users.length === pageSize];2
     };
 
     public async getIsFollowerStatus(
@@ -26,46 +59,68 @@ export class FollowService{
         user: UserDTO,
         selectedUser: UserDTO
     ): Promise<boolean> {
-        // TODO: Replace with the result of calling server
-        return FakeData.instance.isFollower();
+        if( ! SessionDAO.instance.tokenIsValid(authToken) ){
+            throw new Error("Invalid token");
+        }
+
+        const follows = await FollowsDAO.instance.get({
+            follower_alias: user.alias,
+            followee_alias: selectedUser.alias
+        });
+
+        return !!follows
     };
     
     public async getFolloweeCount (
         authToken: string,
         user: UserDTO
     ): Promise<number> {
-        // TODO: Replace with the result of calling server
-        return FakeData.instance.getFolloweeCount(user.alias);
+        if( ! SessionDAO.instance.tokenIsValid(authToken) ){
+            throw new Error("Invalid token");
+        }
+
+        return await FollowsDAO.instance.getFolloweeCount(user.alias) || 0;
     };
 
     public async getFollowerCount(
         authToken: string,
         user: UserDTO
     ): Promise<number> {
-        // TODO: Replace with the result of calling server
-        return FakeData.instance.getFollowerCount(user.alias);
+        if( ! SessionDAO.instance.tokenIsValid(authToken) ){
+            throw new Error("Invalid token");
+        }
+
+        return await FollowsDAO.instance.getFollowerCount(user.alias) || 0;
     };
 
     public async followUser(
         authToken: string,
-        userToUnfollow: UserDTO
+        userToFollow: UserDTO
     ){
+        if( ! SessionDAO.instance.tokenIsValid(authToken) ){
+            throw new Error("Invalid token");
+        }
+        const currentAlias = await SessionDAO.instance.get(authToken).then((session) => session.alias);
         // Pause so we can see the follow message. Remove when connected to the server
-        await new Promise((f) => setTimeout(f, 2000));
+        await FollowsDAO.instance.create({
+            follower_alias: currentAlias,
+            followee_alias: userToFollow.alias
+        });
     }
 
     public async unfollowUser(
         authToken: string,
         userToUnfollow: UserDTO
     ){
-        // Pause so we can see the follow message. Remove when connected to the server
-        await new Promise((f) => setTimeout(f, 2000));
-    }
+        if( ! SessionDAO.instance.tokenIsValid(authToken) ){
+            throw new Error("Invalid token");
+        }
+        const currentAlias = await SessionDAO.instance.get(authToken).then((session) => session.alias);
 
-    private async getFakeUserData(lastItem: UserDTO | null, pageSize: number, userAlias: string): Promise<[UserDTO[], boolean]> {
-        const [items, hasMore] = FakeData.instance.getPageOfUsers(User.fromDto(lastItem), pageSize, userAlias);
-        const dtos = items.map((user) => user.dto);
-        return [dtos, hasMore];
+        await FollowsDAO.instance.delete({
+            follower_alias: currentAlias,
+            followee_alias: userToUnfollow.alias
+        });
     }
 
 }

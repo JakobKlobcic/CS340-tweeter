@@ -1,15 +1,34 @@
-import { FakeData, User } from "tweeter-shared";
-import { AuthTokenDTO, UserDTO, StatusDTO } from "tweeter-shared";
+import { AuthTokenDTO, UserDTO } from "tweeter-shared";
 import { Buffer } from "buffer";
+import { UserDAO, UserDB } from "../dao/UserDAO";
+import { SessionDAO } from "../dao/SessionDAO";
+
+
+
 
 export class UserService{
     public async getUser (
         authToken: string,
         alias: string
     ): Promise<UserDTO | null> {
-        // TODO: Replace with the result of calling server
-        const user = FakeData.instance.findUserByAlias(alias)
-        return user && user.dto
+        // TODO: authenticate token, get user from alias
+        if( ! SessionDAO.instance.tokenIsValid(authToken) ){
+            throw new Error("Invalid token");
+        }
+
+        const user:UserDB|null = await UserDAO.instance.get(alias);
+
+        if(user === null){
+            return null;
+        }
+
+        const userDto:UserDTO = {
+            firstName:user.firstName,
+            lastName:user.lastName,
+            alias:user.alias,
+            imageUrl:user.imageUrl,
+        }
+        return userDto
     };
 
     public async register(
@@ -19,37 +38,56 @@ export class UserService{
         password: string,
         userImageBytes: Uint8Array,
         imageFileExtension: string
-    ): Promise<[UserDTO, AuthTokenDTO]>{    
-        // TODO: Replace with the result of calling the server
-        const user: UserDTO|null = FakeData.instance.firstUser!.dto;
-        const authToken = FakeData.instance.authToken
-
-        if (user === null) {
-          throw new Error("Invalid registration");
+    ): Promise<[UserDTO, AuthTokenDTO]>{  
+        //TODO: upload image to s3 and get the url 
+        const imageUrl = "testUrl";
+        try{
+            await UserDAO.instance.create({
+                firstName: firstName,
+                lastName: lastName,
+                alias: alias,
+                password: password,
+                imageUrl: imageUrl
+            })
+        }catch(err){
+            throw new Error("Unable to register user. Error JSON: "+JSON.stringify(err, null, 2));
         }
+        const user:UserDTO = {
+            firstName,
+            lastName,
+            alias,
+            imageUrl,
+        }
+        const authToken = await SessionDAO.instance.create(alias);
 
-        
-
-        return [user, authToken!.dto];
+        return [user, authToken];
     };
 
     public async login(
         alias: string,
         password: string
     ): Promise<[UserDTO, AuthTokenDTO]>{
-        // TODO: Replace with the result of calling the server
-        const user: UserDTO|null = FakeData.instance.firstUser!.dto;
-        const authToken = FakeData.instance.authToken
-    
-        if (user === null) {
-          throw new Error("Invalid alias or password");
+        const user: UserDB = await UserDAO.instance.get(alias);
+
+        if ( !user ) {
+          throw new Error("Invalid alias or password");//TODO: replace with an error that will be caught by APIGateway
+        }
+        if( user.password !== password ) {
+            throw new Error("Invalid alias or password");//TODO: replace with an error that will be caught by APIGateway
         }
     
-        return [user, authToken!.dto];
+        const authToken = await SessionDAO.instance.create(alias);
+
+        const userDTO: UserDTO = {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            alias: user.alias,
+            imageUrl: user.imageUrl
+        };
+        return [userDTO, authToken]; 
     };
 
     public async logout(authToken: string): Promise<void>{
-        // Pause so we can see the logging out message. Delete when the call to the server is implemented.
-        await new Promise((res) => setTimeout(res, 1000));
+        await SessionDAO.instance.delete(authToken);
     };
 }
