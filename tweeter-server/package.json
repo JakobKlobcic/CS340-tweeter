@@ -5,15 +5,19 @@
   "main": "index.js",
   "scripts": {
     "build": "npm run compile",
-    "compile": "npm run clean && tsc", 
+    "compile": "npm run clean && tsc",
     "clean": "rimraf dist"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "tweeter-shared": "file:../tweeter-shared",
+    "@aws-sdk/client-dynamodb": "^3.699.0",
+    "@aws-sdk/client-s3": "^3.703.0",
+    "@aws-sdk/lib-dynamodb": "^3.699.0",
     "date-fns": "^3.3.1",
+    "fs": "^0.0.1-security",
+    "tweeter-shared": "file:../tweeter-shared",
     "uuid": "^9.0.1"
   }
 }
