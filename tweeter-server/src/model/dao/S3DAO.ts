@@ -1,15 +1,6 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 export class S3DAO {
-    private static _instance: S3DAO;
-
-    static get instance() {
-        if (S3DAO._instance == null) {
-            S3DAO._instance = new S3DAO();
-        }
-        return this._instance;
-    }
-
     async upload(base64Image: string, alias:string, extension: string): Promise<string> {
         try {
             const client = new S3Client({ region: "us-west-2" });

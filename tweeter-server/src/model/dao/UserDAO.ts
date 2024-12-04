@@ -10,16 +10,8 @@ export interface UserDB{
 }
 
 export class UserDAO extends BaseDAO{
-    private static _instance: UserDAO;
     constructor() {
         super("user");
-    }   
-
-    static get instance() {
-        if (UserDAO._instance == null) {
-            UserDAO._instance = new UserDAO();
-        }
-        return this._instance;
     }
 
     async create(data: UserDB): Promise<void>{

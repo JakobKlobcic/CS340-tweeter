@@ -2,21 +2,32 @@ import { AuthTokenDTO, UserDTO } from "tweeter-shared";
 import { UserDAO, UserDB } from "../dao/UserDAO";
 import { SessionDAO } from "../dao/SessionDAO";
 import { S3DAO } from "../dao/S3DAO";
+import { DAOFactory } from "../factory/DAOFactory";
 
 
 
 
 export class UserService{
+    private userDAO: UserDAO;
+    private sessionDAO: SessionDAO;
+    private s3DAO: S3DAO;
+
+    constructor(daoFactory: DAOFactory) {
+        this.userDAO = daoFactory.getUserDAO();
+        this.sessionDAO = daoFactory.getSessionDAO();
+        this.s3DAO = daoFactory.getS3DAO();
+    }
+
     public async getUser (
         authToken: string,
         alias: string
     ): Promise<UserDTO | null> {
         // TODO: authenticate token, get user from alias
-        if( ! SessionDAO.instance.tokenIsValid(authToken) ){
+        if( ! this.sessionDAO.tokenIsValid(authToken) ){
             throw new Error("[Auth Error]: Invalid token");
         }
 
-        const user:UserDB|null = await UserDAO.instance.get(alias);
+        const user:UserDB|null = await this.userDAO.get(alias);
         if(!user){
             return null;
         }
@@ -40,9 +51,9 @@ export class UserService{
     ): Promise<[UserDTO, AuthTokenDTO]>{  
         
         
-        const imageUrl = await S3DAO.instance.upload(userImageBytes, alias, imageFileExtension);
+        const imageUrl = await this.s3DAO.upload(userImageBytes, alias, imageFileExtension);
         try{
-            await UserDAO.instance.create({
+            await this.userDAO.create({
                 firstName: firstName,
                 lastName: lastName,
                 alias: alias,
@@ -58,7 +69,7 @@ export class UserService{
             alias,
             imageUrl,
         }
-        const authToken = await SessionDAO.instance.create(alias);
+        const authToken = await this.sessionDAO.create(alias);
 
         return [user, authToken];
     };
@@ -67,7 +78,7 @@ export class UserService{
         alias: string,
         password: string
     ): Promise<[UserDTO, AuthTokenDTO]>{
-        const user: UserDB = await UserDAO.instance.get(alias);
+        const user: UserDB = await this.userDAO.get(alias);
 
         if ( !user ) {
             throw new Error("[Auth Error]: Invalid alias or password");
@@ -76,7 +87,7 @@ export class UserService{
             throw new Error("[Auth Error]: Invalid alias or password");
         }
     
-        const authToken = await SessionDAO.instance.create(alias);
+        const authToken = await this.sessionDAO.create(alias);
 
         const userDTO: UserDTO = {
             firstName: user.firstName,
@@ -88,6 +99,6 @@ export class UserService{
     };
 
     public async logout(authToken: string): Promise<void>{
-        await SessionDAO.instance.delete(authToken);
+        await this.sessionDAO.delete(authToken);
     };
 }

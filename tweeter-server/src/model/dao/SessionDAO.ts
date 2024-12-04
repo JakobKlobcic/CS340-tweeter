@@ -9,16 +9,8 @@ interface SessionDTO {
     timestamp: number
 }
 export class SessionDAO extends BaseDAO{
-    private static _instance: SessionDAO;
     constructor() {
         super("session");
-    }   
-
-    static get instance() {
-        if (SessionDAO._instance == null) {
-            SessionDAO._instance = new SessionDAO();
-        }
-        return this._instance;
     }
 
     async create(alias: string): Promise<AuthTokenDTO>{
@@ -73,7 +65,7 @@ export class SessionDAO extends BaseDAO{
     async tokenIsValid(authtoken: string): Promise<boolean>{
         var session;
         try{
-            session = await SessionDAO.instance.get(authtoken);  
+            session = await this.get(authtoken);  
         }catch(err){
             return false
         }

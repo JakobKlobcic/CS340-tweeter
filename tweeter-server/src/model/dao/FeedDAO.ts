@@ -3,18 +3,9 @@ import { BaseDAO } from "./BaseDAO";
 import { PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 
 export class FeedDAO extends BaseDAO{
-    private static _instance: FeedDAO;
     constructor() {
         super("feed");
     }
-
-    static get instance() {
-        if (FeedDAO._instance == null) {
-            FeedDAO._instance = new FeedDAO();
-        }
-        return this._instance;
-    }
-
     async create(data: StatusDTO, receiverAlias: string): Promise<void>{
         var newData:any = data;
         newData["receiver_alias"] = receiverAlias;

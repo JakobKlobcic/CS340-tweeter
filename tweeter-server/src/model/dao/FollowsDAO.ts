@@ -6,17 +6,9 @@ export interface FollowsDTO {
     followee_alias: string;
 }
 export class FollowsDAO extends BaseDAO{
-    private static _instance: FollowsDAO;
     constructor() {
         super("follows");
     }   
-
-    static get instance() {
-        if (FollowsDAO._instance == null) {
-            FollowsDAO._instance = new FollowsDAO();
-        }
-        return this._instance;
-    }
 
     async getFollowerCount(alias: string): Promise<number | undefined>{
         try {
