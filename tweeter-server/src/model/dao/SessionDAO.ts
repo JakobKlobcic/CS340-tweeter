@@ -37,7 +37,7 @@ export class SessionDAO extends BaseDAO{
             console.log("Item inserted:", session);
             return {token: session.authtoken, timestamp: session.timestamp};
         } catch (err) {
-            throw Error("Unable to insert item. Error JSON: "+JSON.stringify(err, null, 2)); 
+            throw Error("[Internal Server Error]: Unable to insert item. Error JSON: "+JSON.stringify(err, null, 2)); 
         }
     }
 
@@ -52,7 +52,7 @@ export class SessionDAO extends BaseDAO{
             console.log("Got Item:", JSON.stringify(session, null, 2));
             return session.Item as SessionDTO;
         } catch (err) {
-            throw Error("Unable to get item. Error JSON: "+JSON.stringify(err, null, 2));
+            throw Error("[Internal Server Error]: Unable to get item. Error JSON: "+JSON.stringify(err, null, 2));
         }
     }
 
@@ -66,7 +66,7 @@ export class SessionDAO extends BaseDAO{
             await this.ddbDocClient.send(new DeleteCommand(params));
             console.log("Item deleted:", params.Key);
         } catch (err) {
-            throw Error("Unable to delete item. Error JSON: "+JSON.stringify(err, null, 2));
+            throw Error("[Internal Server Error]: Unable to delete item. Error JSON: "+JSON.stringify(err, null, 2));
         }
     }
 

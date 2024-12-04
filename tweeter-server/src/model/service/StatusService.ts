@@ -11,13 +11,13 @@ export class StatusService{
         lastItem: StatusDTO | null
     ): Promise<[StatusDTO[], boolean]>{
         if( ! SessionDAO.instance.tokenIsValid(authToken) ){
-            throw new Error("Invalid token");
+            throw new Error("[Auth Error]: Invalid token");
         }
         try{
             const stories = await StoryDAO.instance.getMultiple(userAlias, pageSize, lastItem);
             return [stories , stories.length === pageSize];
         }catch(err){
-            throw new Error("Unable to load more story items. Error JSON: "+JSON.stringify(err, null, 2));
+            throw new Error("[Internal Server Error]: Unable to load more story items. Error JSON: "+JSON.stringify(err, null, 2));
         }
     };
     public async loadMoreFeedItems(
@@ -27,13 +27,13 @@ export class StatusService{
         lastItem: StatusDTO | null
     ): Promise<[StatusDTO[], boolean]>{
         if( ! SessionDAO.instance.tokenIsValid(authToken) ){
-            throw new Error("Invalid token");
+            throw new Error("[Auth Error]: Invalid token");
         }
         try{
             const feed = await FeedDAO.instance.getMultiple(userAlias, pageSize, lastItem);
             return [feed , feed.length === pageSize];
         }catch(err){
-            throw new Error("Unable to load more feed items. Error JSON: "+JSON.stringify(err, null, 2));
+            throw new Error("[Internal Server Error]: Unable to load more feed items. Error JSON: "+JSON.stringify(err, null, 2));
         }
         
     };
@@ -43,24 +43,16 @@ export class StatusService{
         newStatus: StatusDTO
     ): Promise<void>{
         if( ! SessionDAO.instance.tokenIsValid(authToken) ){
-            throw new Error("Invalid token");
+            throw new Error("[Auth Error]: Invalid token");
         }
         try{
             await StoryDAO.instance.create(newStatus);
-            console.log("STORY created");
-            const followers:string[] = []
-            var hasMore = true
-            while(hasMore){
-                console.log("STORY - current followers:", followers)
-                const newFollowers = await FollowsDAO.instance.getFollowers( newStatus.user.alias, 100, followers[followers.length-1] )
-                hasMore = newFollowers.length === 100
-            }
-            console.log("STORY - Followers", followers)
-            followers.forEach(async follower => {
+            const followers:string[] = await FollowsDAO.instance.getFollowers( newStatus.user.alias, 100, null)
+            for (const follower of followers) {
                 await FeedDAO.instance.create(newStatus, follower);
-            })
+            }
         }catch(err){
-            throw new Error("Unable to post status. Error JSON: "+JSON.stringify(err, null, 2));
+            throw new Error("[Internal Server Error]: Unable to post status. Error JSON: "+JSON.stringify(err, null, 2));
         }
 
     };

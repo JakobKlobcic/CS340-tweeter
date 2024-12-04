@@ -1,6 +1,6 @@
 import { StatusDTO } from "tweeter-shared";
 import { BaseDAO } from "./BaseDAO";
-import { PutCommand, GetCommand, DeleteCommand, QueryCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 
 export class FeedDAO extends BaseDAO{
     private static _instance: FeedDAO;
@@ -17,19 +17,15 @@ export class FeedDAO extends BaseDAO{
 
     async create(data: StatusDTO, receiverAlias: string): Promise<void>{
         var newData:any = data;
-        newData["author_alias"] = newData.user.alias;
         newData["receiver_alias"] = receiverAlias;
-
         const params = {
             TableName: this.TABLE_NAME,
             Item: newData
         };
-        console.log("FEEDDAO--", params);
         try {
             await this.ddbDocClient.send(new PutCommand(params));
-            console.log("Item inserted:", params.Item);
         } catch (err) {
-            throw Error("Unable to insert item. Error JSON: "+JSON.stringify(err, null, 2)); 
+            throw Error("[Internal Server Error]: Unable to insert item. Error JSON: "+JSON.stringify(err, null, 2)); 
         }
     }
 
@@ -53,7 +49,7 @@ export class FeedDAO extends BaseDAO{
             const response = await this.ddbDocClient.send(command);
             return response.Items as StatusDTO[];
         } catch (error) {
-            throw Error("Internal server Error: "+JSON.stringify(error, null, 2));
+            throw Error("[Internal Server Error]:  "+JSON.stringify(error, null, 2));
         }
     }
 }

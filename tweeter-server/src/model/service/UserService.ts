@@ -1,7 +1,7 @@
 import { AuthTokenDTO, UserDTO } from "tweeter-shared";
-import { Buffer } from "buffer";
 import { UserDAO, UserDB } from "../dao/UserDAO";
 import { SessionDAO } from "../dao/SessionDAO";
+import { S3DAO } from "../dao/S3DAO";
 
 
 
@@ -13,20 +13,19 @@ export class UserService{
     ): Promise<UserDTO | null> {
         // TODO: authenticate token, get user from alias
         if( ! SessionDAO.instance.tokenIsValid(authToken) ){
-            throw new Error("Invalid token");
+            throw new Error("[Auth Error]: Invalid token");
         }
 
         const user:UserDB|null = await UserDAO.instance.get(alias);
-
-        if(user === null){
+        if(!user){
             return null;
         }
 
         const userDto:UserDTO = {
-            firstName:user.firstName,
-            lastName:user.lastName,
-            alias:user.alias,
-            imageUrl:user.imageUrl,
+            firstName:user.firstName && user.firstName,
+            lastName:user.lastName && user.lastName,
+            alias:user.alias && user.alias,
+            imageUrl:user.imageUrl && user.imageUrl,
         }
         return userDto
     };
@@ -36,11 +35,12 @@ export class UserService{
         lastName: string,
         alias: string,
         password: string,
-        userImageBytes: Uint8Array,
+        userImageBytes: string,
         imageFileExtension: string
     ): Promise<[UserDTO, AuthTokenDTO]>{  
-        //TODO: upload image to s3 and get the url 
-        const imageUrl = "testUrl";
+        
+        
+        const imageUrl = await S3DAO.instance.upload(userImageBytes, alias, imageFileExtension);
         try{
             await UserDAO.instance.create({
                 firstName: firstName,
@@ -50,7 +50,7 @@ export class UserService{
                 imageUrl: imageUrl
             })
         }catch(err){
-            throw new Error("Unable to register user. Error JSON: "+JSON.stringify(err, null, 2));
+            throw new Error("[Internal Server Error]: Unable to register user. Error JSON: "+JSON.stringify(err, null, 2));
         }
         const user:UserDTO = {
             firstName,
@@ -70,10 +70,10 @@ export class UserService{
         const user: UserDB = await UserDAO.instance.get(alias);
 
         if ( !user ) {
-          throw new Error("Invalid alias or password");//TODO: replace with an error that will be caught by APIGateway
+            throw new Error("[Auth Error]: Invalid alias or password");
         }
         if( user.password !== password ) {
-            throw new Error("Invalid alias or password");//TODO: replace with an error that will be caught by APIGateway
+            throw new Error("[Auth Error]: Invalid alias or password");
         }
     
         const authToken = await SessionDAO.instance.create(alias);

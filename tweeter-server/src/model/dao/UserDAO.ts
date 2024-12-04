@@ -32,7 +32,7 @@ export class UserDAO extends BaseDAO{
             await this.ddbDocClient.send(new PutCommand(params));
             console.log("Item inserted:", params.Item);
         } catch (err) {
-            throw Error("Unable to insert item. Error JSON: "+JSON.stringify(err, null, 2)); 
+            throw Error("[Internal Server Error]: Unable to insert item. Error JSON: "+JSON.stringify(err, null, 2)); 
         }
     }
 
@@ -48,7 +48,7 @@ export class UserDAO extends BaseDAO{
             
             return follows.Item as UserDB;
         } catch (err) {
-            throw Error("Unable to get item. Error JSON: "+JSON.stringify(err, null, 2));
+            throw Error("[Internal Server Error]: Unable to get item. Error JSON: "+JSON.stringify(err, null, 2));
         }
     }
 
@@ -76,7 +76,7 @@ export class UserDAO extends BaseDAO{
             return users;
             
         } catch (error) {
-            console.error("Error fetching followees info:", error);
+            console.error("[Internal Server Error]: Error fetching followees info:", error);
         }
         return [];
     }

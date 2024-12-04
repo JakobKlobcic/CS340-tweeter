@@ -32,7 +32,7 @@ export class FollowsDAO extends BaseDAO{
             const response = await this.ddbDocClient.send(command);
             return response.Count;
         } catch (error) {
-            throw Error("Internal server Error: "+JSON.stringify(error, null, 2));
+            throw Error("[Internal Server Error]: "+JSON.stringify(error, null, 2));
         }
     }
 
@@ -50,7 +50,7 @@ export class FollowsDAO extends BaseDAO{
             const response = await this.ddbDocClient.send(command);
             return response.Count;
         } catch (error) {
-            throw Error("Internal server Error: "+JSON.stringify(error, null, 2));
+            throw Error("[Internal Server Error]: "+JSON.stringify(error, null, 2));
         }
     }
 
@@ -64,7 +64,7 @@ export class FollowsDAO extends BaseDAO{
             await this.ddbDocClient.send(new PutCommand(params));
             console.log("Item inserted:", params.Item);
         } catch (err) {
-            throw Error("Unable to insert item. Error JSON: "+JSON.stringify(err, null, 2)); 
+            throw Error("[Internal Server Error]: Unable to insert item. Error JSON: "+JSON.stringify(err, null, 2)); 
         }
     }
 
@@ -79,7 +79,7 @@ export class FollowsDAO extends BaseDAO{
             console.log("Got Item:", JSON.stringify(follows, null, 2));
             return follows.Item as FollowsDTO;
         } catch (err) {
-            throw Error("Unable to get item. Error JSON: "+JSON.stringify(err, null, 2));
+            throw Error("[Internal Server Error]: Unable to get item. Error JSON: "+JSON.stringify(err, null, 2));
         }
     }
 
@@ -103,7 +103,7 @@ export class FollowsDAO extends BaseDAO{
             const queryResponse = await this.ddbDocClient.send(queryCommand);
             return queryResponse.Items?.map(item => item.follower_alias) || [];
         } catch (error) {
-            console.error("Error querying followees:", error);
+            console.error("[Internal Server Error]: Error querying followees:", error);
             throw error;
         }
     }
@@ -126,7 +126,7 @@ export class FollowsDAO extends BaseDAO{
             const queryResponse = await this.ddbDocClient.send(queryCommand);
             return queryResponse.Items?.map(item => item.followee_alias) || [];
         } catch (error) {
-            console.error("Error querying followees:", error);
+            console.error("[Internal Server Error]: Error querying followees:", error);
             throw error;
         }
     }
@@ -141,7 +141,7 @@ export class FollowsDAO extends BaseDAO{
             await this.ddbDocClient.send(new DeleteCommand(params));
             console.log("Item deleted:", params.Key);
         } catch (err) {
-            throw Error("Unable to delete item. Error JSON: "+JSON.stringify(err, null, 2));
+            throw Error("[Internal Server Error]: Unable to delete item. Error JSON: "+JSON.stringify(err, null, 2));
         }
     }
 }

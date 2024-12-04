@@ -10,7 +10,7 @@ export class FollowService{
         lastItem: UserDTO | null
     ): Promise<[UserDTO[], boolean]> {
         if( ! SessionDAO.instance.tokenIsValid(authToken) ){
-            throw new Error("Invalid token");
+            throw new Error("[Auth Error]: Invalid token");
         }
         const followerAliases = await FollowsDAO.instance.getFollowers(userAlias, pageSize, lastItem);
 
@@ -35,7 +35,7 @@ export class FollowService{
         lastItem: UserDTO | null
     ): Promise<[UserDTO[], boolean]> {
         if( ! SessionDAO.instance.tokenIsValid(authToken) ){
-            throw new Error("Invalid token");
+            throw new Error("[Auth Error]: Invalid token");
         }
         const follows = await FollowsDAO.instance.getFollowees(userAlias, pageSize, lastItem);
         //const userAliases = follows.map(follow);
@@ -60,7 +60,7 @@ export class FollowService{
         selectedUser: UserDTO
     ): Promise<boolean> {
         if( ! SessionDAO.instance.tokenIsValid(authToken) ){
-            throw new Error("Invalid token");
+            throw new Error("[Auth Error]: Invalid token");
         }
 
         const follows = await FollowsDAO.instance.get({
@@ -76,7 +76,7 @@ export class FollowService{
         user: UserDTO
     ): Promise<number> {
         if( ! SessionDAO.instance.tokenIsValid(authToken) ){
-            throw new Error("Invalid token");
+            throw new Error("[Auth Error]: Invalid token");
         }
 
         return await FollowsDAO.instance.getFolloweeCount(user.alias) || 0;
@@ -87,7 +87,7 @@ export class FollowService{
         user: UserDTO
     ): Promise<number> {
         if( ! SessionDAO.instance.tokenIsValid(authToken) ){
-            throw new Error("Invalid token");
+            throw new Error("[Auth Error]: Invalid token");
         }
 
         return await FollowsDAO.instance.getFollowerCount(user.alias) || 0;
@@ -98,7 +98,7 @@ export class FollowService{
         userToFollow: UserDTO
     ){
         if( ! SessionDAO.instance.tokenIsValid(authToken) ){
-            throw new Error("Invalid token");
+            throw new Error("[Auth Error]: Invalid token");
         }
         const currentAlias = await SessionDAO.instance.get(authToken).then((session) => session.alias);
         // Pause so we can see the follow message. Remove when connected to the server
@@ -113,7 +113,7 @@ export class FollowService{
         userToUnfollow: UserDTO
     ){
         if( ! SessionDAO.instance.tokenIsValid(authToken) ){
-            throw new Error("Invalid token");
+            throw new Error("[Auth Error]: Invalid token");
         }
         const currentAlias = await SessionDAO.instance.get(authToken).then((session) => session.alias);
 

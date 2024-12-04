@@ -10,7 +10,7 @@ export class S3DAO {
         return this._instance;
     }
 
-    async s3upload(base64Image: string, fileName:string, extension: string) {
+    async upload(base64Image: string, alias:string, extension: string): Promise<string> {
         try {
             const client = new S3Client({ region: "us-west-2" });
     
@@ -22,7 +22,7 @@ export class S3DAO {
             const params = {
                 Body: binaryData,
                 Bucket: "tweeter-bucket-cs340",
-                Key: fileName,
+                Key: alias + "." + extension,
                 ContentType: `image/${extension}`,
                 ContentEncoding: 'base64'
             };
@@ -31,8 +31,9 @@ export class S3DAO {
             const response = await client.send(command);
     
             console.log("File upload successful with ", response.$metadata.httpStatusCode);
+            return "https://tweeter-bucket-cs340.s3-us-west-2.amazonaws.com/" + alias + "." + extension;
         } catch (error) {
-            console.error("Error uploading file: ", error);
+            throw Error("[Internal Server Error]: "+JSON.stringify(error, null, 2));
         }
     }
 }
