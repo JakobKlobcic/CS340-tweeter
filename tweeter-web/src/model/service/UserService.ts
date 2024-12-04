@@ -9,7 +9,6 @@ export class UserService{
         authToken: AuthToken,
         alias: string
     ): Promise<User | null> {
-        // TODO: Replace with the result of calling server
         return await this.serverFacade.getUser({authToken:authToken.token, alias});
     };
 
@@ -30,7 +29,7 @@ export class UserService{
             lastName, 
             alias, 
             password, 
-            userImageBytes, //TODO becomes string
+            userImageBytes: imageStringBase64, //TODO becomes string
             imageFileExtension
         });
     };

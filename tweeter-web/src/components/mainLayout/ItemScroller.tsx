@@ -25,6 +25,7 @@ const ItemScroller = <T, S, V extends ItemView<T>, P extends ItemPresenter<T, S>
   // Load initial items whenever the displayed user changes. Done in a separate useEffect hook so the changes from reset will be visible.
   useEffect(() => {
     if(changedDisplayedUser) {
+      console.log("------------------------Loading initial items");
       loadMoreItems();
     }
   }, [changedDisplayedUser]);
@@ -51,6 +52,7 @@ const ItemScroller = <T, S, V extends ItemView<T>, P extends ItemPresenter<T, S>
   const [presenter] = useState(props.presenterGenerator(listener));
 
   const loadMoreItems = async () => {
+    console.log("-------------------Loading more items");
     presenter.loadMoreItems(authToken!, displayedUser!.alias)
     setChangedDisplayedUser(false)
   }

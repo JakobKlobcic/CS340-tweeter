@@ -19,8 +19,8 @@ export class PostPresenter extends Presenter<PostView>{
     }
 
     public extractAlias(value: string): string{
-        const index = value.indexOf("@");
-        return value.substring(index);
+      const vals = value.split("/");
+      return vals[vals.length-1];
     };
 
     public async getUser(
