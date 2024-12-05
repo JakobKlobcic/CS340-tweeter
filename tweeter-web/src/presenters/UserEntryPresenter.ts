@@ -35,7 +35,8 @@ export abstract class UserEntryPresenter<U, V extends UserEntryView> extends Pre
       this.view.updateUserInfo(user, user, authToken, rememberMe);
     } catch (error) {
       // handle error as needed
-      console.error('Error during entry action:', error);
+      const err : Error = error as Error;
+      this.view.displayErrorMessage(err.message);
     }
   }
 }

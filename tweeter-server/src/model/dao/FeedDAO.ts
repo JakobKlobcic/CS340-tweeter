@@ -20,7 +20,7 @@ export class FeedDAO extends BaseDAO{
         }
     }
 
-    async getMultiple(alias: string, pageSize: number, lastItem:StatusDTO|null): Promise<StatusDTO[]>{
+    async getMultiple(alias: string, pageSize: number, lastItem:any): Promise<StatusDTO[]>{
         var newLastItem: StatusDTO | undefined = undefined;
         if( lastItem ){
             newLastItem = lastItem;

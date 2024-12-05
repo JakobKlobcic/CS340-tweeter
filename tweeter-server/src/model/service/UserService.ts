@@ -3,11 +3,10 @@ import { UserDAO, UserDB } from "../dao/UserDAO";
 import { SessionDAO } from "../dao/SessionDAO";
 import { S3DAO } from "../dao/S3DAO";
 import { DAOFactory } from "../factory/DAOFactory";
-
-
-
+import * as bcrypt from 'bcryptjs';
 
 export class UserService{
+    private salt = bcrypt.genSaltSync(10);
     private userDAO: UserDAO;
     private sessionDAO: SessionDAO;
     private s3DAO: S3DAO;
@@ -48,16 +47,15 @@ export class UserService{
         password: string,
         userImageBytes: string,
         imageFileExtension: string
-    ): Promise<[UserDTO, AuthTokenDTO]>{  
-        
-        
+    ): Promise<[UserDTO, AuthTokenDTO]>{       
         const imageUrl = await this.s3DAO.upload(userImageBytes, alias, imageFileExtension);
+        const hashedPassword = bcrypt.hashSync(password, this.salt);
         try{
             await this.userDAO.create({
                 firstName: firstName,
                 lastName: lastName,
                 alias: alias,
-                password: password,
+                password: hashedPassword,
                 imageUrl: imageUrl
             })
         }catch(err){
@@ -83,7 +81,7 @@ export class UserService{
         if ( !user ) {
             throw new Error("[Auth Error]: Invalid alias or password");
         }
-        if( user.password !== password ) {
+        if( !bcrypt.compareSync(password, user.password)) {
             throw new Error("[Auth Error]: Invalid alias or password");
         }
     

@@ -27,7 +27,7 @@ export class StatusService{
             throw new Error("[Auth Error]: Invalid token");
         }
         try{
-            const stories = await this.storyDAO.getMultiple(userAlias, pageSize, lastItem);
+            const stories = await this.storyDAO.getMultiple(userAlias, pageSize, lastItem && {author_alias: userAlias, timestamp: lastItem.timestamp});
             return [stories , stories.length === pageSize];
         }catch(err){
             throw new Error("[Internal Server Error]: Unable to load more story items. Error JSON: "+JSON.stringify(err, null, 2));
@@ -43,7 +43,7 @@ export class StatusService{
             throw new Error("[Auth Error]: Invalid token");
         }
         try{
-            const feed = await this.feedDAO.getMultiple(userAlias, pageSize, lastItem);
+            const feed = await this.feedDAO.getMultiple(userAlias, pageSize, lastItem && {receiver_alias: userAlias, timestamp: lastItem.timestamp});
             return [feed , feed.length === pageSize];
         }catch(err){
             throw new Error("[Internal Server Error]: Unable to load more feed items. Error JSON: "+JSON.stringify(err, null, 2));

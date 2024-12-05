@@ -10,7 +10,7 @@ export class FollowsDAO extends BaseDAO{
         super("follows");
     }   
 
-    async getFollowerCount(alias: string): Promise<number | undefined>{
+    async getFolloweeCount(alias: string): Promise<number | undefined>{
         try {
             const command = new ScanCommand({
               TableName: this.TABLE_NAME,
@@ -28,7 +28,7 @@ export class FollowsDAO extends BaseDAO{
         }
     }
 
-    async getFolloweeCount(alias: string): Promise<number | undefined>{
+    async getFollowerCount(alias: string): Promise<number | undefined>{
         try {
             const command = new ScanCommand({
               TableName: this.TABLE_NAME,

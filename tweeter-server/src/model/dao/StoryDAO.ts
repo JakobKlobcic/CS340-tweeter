@@ -3,17 +3,9 @@ import { BaseDAO } from "./BaseDAO";
 import { PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 
 export class StoryDAO extends BaseDAO{
-    private static _instance: StoryDAO;
 
     constructor() {
         super("story");
-    }
-
-    static get instance() {
-        if (StoryDAO._instance == null) {
-            StoryDAO._instance = new StoryDAO();
-        }
-        return this._instance;
     }
 
     async create(data: StatusDTO): Promise<void>{
@@ -33,7 +25,7 @@ export class StoryDAO extends BaseDAO{
         }
     }
 
-    async getMultiple(alias: string, pageSize: number, lastItem:StatusDTO|null): Promise<StatusDTO[]>{
+    async getMultiple(alias: string, pageSize: number, lastItem:any): Promise<StatusDTO[]>{
         var newLastItem: StatusDTO | undefined = undefined;
         if( lastItem ){
             newLastItem = lastItem;

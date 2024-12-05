@@ -22,7 +22,7 @@ export class FollowService{
         if( ! this.sessionDAO.tokenIsValid(authToken) ){
             throw new Error("[Auth Error]: Invalid token");
         }
-        const followerAliases = await this.followsDAO.getFollowers(userAlias, pageSize, lastItem);
+        const followerAliases = await this.followsDAO.getFollowers(userAlias, pageSize, lastItem && {follower_alias: lastItem.alias, followee_alias: userAlias});
 
         const usersDB = await this.userDAO.getMultiple(followerAliases);
         
@@ -47,11 +47,8 @@ export class FollowService{
         if( ! this.sessionDAO.tokenIsValid(authToken) ){
             throw new Error("[Auth Error]: Invalid token");
         }
-        const follows = await this.followsDAO.getFollowees(userAlias, pageSize, lastItem);
-        //const userAliases = follows.map(follow);
-        console.log("FOLLOWEES ALIASES", follows)
+        const follows = await this.followsDAO.getFollowees(userAlias, pageSize, lastItem && {follower_alias: userAlias, followee_alias: lastItem.alias});
         const usersDB = await this.userDAO.getMultiple(follows);
-
         const users = usersDB.map(user => {
             return {
                 firstName: user.firstName,
