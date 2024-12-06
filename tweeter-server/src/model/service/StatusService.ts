@@ -4,17 +4,21 @@ import { StoryDAO } from "../dao/StoryDAO";
 import { FollowsDAO } from "../dao/FollowsDAO";
 import { FeedDAO } from "../dao/FeedDAO";
 import { DAOFactory } from "../factory/DAOFactory";
+import { SQSAccess } from "../sqs/SQSAccess";
+import { PostHandler } from "../sqs/PostHandler";
 export class StatusService{
     private sessionDAO: SessionDAO;
     private storyDAO: StoryDAO;
     private feedDAO: FeedDAO;
     private followsDAO: FollowsDAO;
+    private postHandler: PostHandler;
 
     constructor(daoFactory: DAOFactory){
         this.sessionDAO = daoFactory.getSessionDAO();
         this.storyDAO = daoFactory.getStoryDAO();
         this.feedDAO = daoFactory.getFeedDAO();
         this.followsDAO = daoFactory.getFollowsDAO();
+        this.postHandler = new PostHandler();
     }
 
     public async loadMoreStoryItems(
@@ -58,16 +62,17 @@ export class StatusService{
         if( ! this.sessionDAO.tokenIsValid(authToken) ){
             throw new Error("[Auth Error]: Invalid token");
         }
-        try{
-            await this.storyDAO.create(newStatus);
-            const followers:string[] = await this.followsDAO.getFollowers( newStatus.user.alias, 100, null)
-            for (const follower of followers) {
-                await this.feedDAO.create(newStatus, follower);
-            }
-        }catch(err){
-            throw new Error("[Internal Server Error]: Unable to post status. Error JSON: "+JSON.stringify(err, null, 2));
-        }
+        const startTime = new Date().getTime();
+        await this.storyDAO.create(newStatus);
+        const endTime = new Date().getTime();
 
+        console.log("Time taken to write to story table: ", endTime - startTime);
+
+        const startTime2 = new Date().getTime();
+        await this.postHandler.postStatus(newStatus);
+        const endTime2 = new Date().getTime();
+
+        console.log("Time taken to write to post queue: ", endTime2 - startTime2);
     };
 
 }

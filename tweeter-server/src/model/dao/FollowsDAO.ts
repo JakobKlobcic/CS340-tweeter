@@ -76,6 +76,7 @@ export class FollowsDAO extends BaseDAO{
     }
 
     async getFollowers(alias: string, pageSize: number, lastItem?:any): Promise<string[]>{
+        console.log("____________Getting followers for alias: ", alias, " with pageSize: ", pageSize, " and lastItem: ", lastItem);
         let params: any= {
             TableName: this.TABLE_NAME,
             IndexName: "followee_alias-index",

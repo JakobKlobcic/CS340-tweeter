@@ -15,5 +15,7 @@ tweeterRegisterUserLambda | lambda/user/RegisterUserLambda.handler
 tweeterLogoutUserLambda | lambda/user/LogoutUserLambda.handler
 tweeterFollowUserLambda | lambda/follow/FollowUserLambda.handler
 tweeterUnfollowUserLambda | lambda/follow/UnfollowUserLambda.handler
+tweeterFollowFetcherLambda | lambda/sqs/FollowFetcherLambda.handler
+tweeterJobHandlerLambda | lambda/sqs/JobHandlerLambda.handler
 '
-LAMBDALAYER_ARN='arn:aws:lambda:us-west-2:183631326760:layer:tweeter-layer:14'
+LAMBDALAYER_ARN='arn:aws:lambda:us-west-2:183631326760:layer:tweeter-layer:15'
