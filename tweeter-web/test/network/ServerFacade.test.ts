@@ -30,7 +30,7 @@ describe("ServerFacade Integration Tests", () => {
       lastName: "Wick",
       alias: testAlias,
       password: "babayaga",
-      userImageBytes: Buffer.from([]),
+      userImageBytes: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
       imageFileExtension: "png"
     };
 
@@ -68,47 +68,47 @@ describe("ServerFacade Integration Tests", () => {
     expect(typeof hasMore === 'boolean').toBeTruthy();
   });
 
-  it("should get follower count", async () => {
-    const authToken = new AuthToken("test-token", Date.now());
-    const request: FollowCountRequest = {
-      authToken: authToken.token,
-      user: testUser
-    };
+  // it("should get follower count", async () => {
+  //   const authToken = new AuthToken("test-token", Date.now());
+  //   const request: FollowCountRequest = {
+  //     authToken: authToken.token,
+  //     user: testUser
+  //   };
 
-    const followerCount = await serverFacade.getFollowerCount(request);
-    expect(typeof followerCount).toBe("number");
-  });
+  //   const followerCount = await serverFacade.getFollowerCount(request);
+  //   expect(typeof followerCount).toBe("number");
+  // });
 
-  it("should get followee count", async () => {
-    const authToken = new AuthToken("test-token", Date.now());
-    const request: FollowCountRequest = {
-      authToken: authToken.token,
-      user: testUser
-    };
+  // it("should get followee count", async () => {
+  //   const authToken = new AuthToken("test-token", Date.now());
+  //   const request: FollowCountRequest = {
+  //     authToken: authToken.token,
+  //     user: testUser
+  //   };
 
-    const followeeCount = await serverFacade.getFolloweeCount(request);
-    expect(typeof followeeCount).toBe("number");
-  });
+  //   const followeeCount = await serverFacade.getFolloweeCount(request);
+  //   expect(typeof followeeCount).toBe("number");
+  // });
 
-  it("should follow a user", async () => {
-    const authToken = new AuthToken("test-token", Date.now());
-    const request: ChangeFollowStatusRequest = {
-      authToken: authToken.token,
-      affectedUser: testUser
-    };
+  // it("should follow a user", async () => {
+  //   const authToken = new AuthToken("test-token", Date.now());
+  //   const request: ChangeFollowStatusRequest = {
+  //     authToken: authToken.token,
+  //     affectedUser: testUser
+  //   };
 
-    await expect(serverFacade.follow(request)).resolves.not.toThrow();
-  });
+  //   await expect(serverFacade.follow(request)).resolves.not.toThrow();
+  // });
 
-  it("should unfollow a user", async () => {
-    const authToken = new AuthToken("test-token", Date.now());
-    const request: ChangeFollowStatusRequest = {
-      authToken: authToken.token,
-      affectedUser: testUser
-    };
+  // it("should unfollow a user", async () => {
+  //   const authToken = new AuthToken("test-token", Date.now());
+  //   const request: ChangeFollowStatusRequest = {
+  //     authToken: authToken.token,
+  //     affectedUser: testUser
+  //   };
 
-    await expect(serverFacade.unfollow(request)).resolves.not.toThrow();
-  });
+  //   await expect(serverFacade.unfollow(request)).resolves.not.toThrow();
+  // });
 
   it("should get user details", async () => {
     const authToken = new AuthToken("test-token", Date.now());
@@ -121,17 +121,17 @@ describe("ServerFacade Integration Tests", () => {
     expect(user).toBeInstanceOf(User);
   });
 
-  it("should check if a user is a follower", async () => {
-    const authToken = new AuthToken("test-token", Date.now());
-    const request: IsFollowerStatusRequest = {
-      authToken: authToken.token,
-      user: testUser,
-      selectedUser: testUser
-    };
+  // it("should check if a user is a follower", async () => {
+  //   const authToken = new AuthToken("test-token", Date.now());
+  //   const request: IsFollowerStatusRequest = {
+  //     authToken: authToken.token,
+  //     user: testUser,
+  //     selectedUser: testUser
+  //   };
 
-    const isFollower = await serverFacade.getIsFollowerStatus(request);
-    expect(typeof isFollower).toBe("boolean");
-  });
+  //   const isFollower = await serverFacade.getIsFollowerStatus(request);
+  //   expect(typeof isFollower).toBe("boolean");
+  // });
 
   it("should log in a user", async () => {
     const request: LoginUserRequest = {

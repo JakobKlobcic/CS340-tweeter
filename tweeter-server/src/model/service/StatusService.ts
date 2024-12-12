@@ -62,17 +62,9 @@ export class StatusService{
         if( ! this.sessionDAO.tokenIsValid(authToken) ){
             throw new Error("[Auth Error]: Invalid token");
         }
-        const startTime = new Date().getTime();
         await this.storyDAO.create(newStatus);
-        const endTime = new Date().getTime();
 
-        console.log("Time taken to write to story table: ", endTime - startTime);
-
-        const startTime2 = new Date().getTime();
         await this.postHandler.postStatus(newStatus);
-        const endTime2 = new Date().getTime();
-
-        console.log("Time taken to write to post queue: ", endTime2 - startTime2);
     };
 
 }

@@ -10,7 +10,7 @@ export const handler = async function (event: any) {
         const followsDAO = new FollowsDAO();
         const sqsAccess = new SQSAccess();
         const pageSize = 100;
-        const batchSize = 25;
+        const batchSize = 100;
         
         let lastItem = null;
 
@@ -21,7 +21,6 @@ export const handler = async function (event: any) {
             for (let j = 0; j < followers.length; j += batchSize) {
                 const batch = followers.slice(j, j + batchSize);
                 console.log(`Adding batch of ${batch.length} followers to jobs queue`);
-                console.log(`Batch: ${JSON.stringify(batch)}`);
                 await sqsAccess.writeToJobsQ(post, batch);
             }
 
